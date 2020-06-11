@@ -1,0 +1,11 @@
+appdirs==1.4.4
+distlib==0.3.0
+Django==2.1.15
+filelock==3.0.12
+pbr==5.4.5
+pytz==2020.1
+six==1.15.0
+stevedore==2.0.0
+virtualenv==20.0.21
+virtualenv-clone==0.5.4
+virtualenvwrapper==4.8.4

@@ -32,7 +32,7 @@ const actions = { // 비동기 처리 로직, mutation을 실행시키는 역할
         
         const token = sessionStorage.getItem('jwt')
         if (token) {
-            commit('setTOken', token)
+            commit('setToken', token)
         }
     },
 
