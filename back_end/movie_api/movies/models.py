@@ -15,8 +15,12 @@ class Actor(models.Model):
 
 class Movie(models.Model):
     title = models.CharField(max_length=140)
+<<<<<<< HEAD
     title_en = models.CharField(max_length=140)
     rate = models.CharField(max_length=100)
+=======
+    title_en = models.CharField(max_length=140)    
+>>>>>>> 9ddd8c4f0ef1203053298a3fb11bce6adefcb411
     director = models.CharField(max_length=100)
     actors = models.ManyToManyField(Actor, related_name='movies', blank=True)
     img_url = models.TextField()
