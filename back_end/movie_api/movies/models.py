@@ -15,13 +15,12 @@ class Actor(models.Model):
 
 class Movie(models.Model):
     title = models.CharField(max_length=140)
-    title_en = models.CharField(max_length=140)
-    rate = models.CharField(max_length=100)
-    directors = models.CharField(max_length=100)
+    title_en = models.CharField(max_length=140)    
+    director = models.CharField(max_length=100)
     actors = models.ManyToManyField(Actor, related_name='movies', blank=True)
     img_url = models.TextField()
     description = models.TextField()
     open_date = models.CharField(max_length=50)
-    genres = models.ManyToManyField(Genre, related_name='movies', blank=True)
+    genre = models.ManyToManyField(Genre, related_name='movies', blank=True)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='movies', blank=True)
     
