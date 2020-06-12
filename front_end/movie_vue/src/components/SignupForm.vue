@@ -1,19 +1,36 @@
 <template>
   <div class="signup-form mx-auto">
+    <div v-if="getErrors.length">
+      <v-alert
+        dense
+        outlined
+        type="error"
+        v-for="(error, idx) in getErrors"
+        :key="idx"
+      >{{ error }}</v-alert>
+    </div>
+
     <h1>Sign up</h1>
 
     <form class="signup-input" @submit.prevent="signup(userInput)">
-      <div v-if="getErrors.length" class="error-list alert alert-danger font-weight-bold">
-        <ul class="m-0 p-0">
-          <li class="errMessage" v-for="(error, idx) in getErrors" :key="idx">{{ error }}</li>
-        </ul>
-      </div>
       <div class="form-group">
-        <v-text-field v-model="userInput.username" label="Username" name="Username" required></v-text-field>
+        <v-text-field 
+            v-model="userInput.username" 
+            label="Username" 
+            name="Username" 
+            prepend-icon="mdi-account"
+            required
+        ></v-text-field>
       </div>
 
       <div class="form-group">
-        <v-text-field v-model="userInput.email" label="Email" name="Email" required></v-text-field>
+        <v-text-field 
+            v-model="userInput.email" 
+            label="Email"
+            name="Email" 
+            prepend-icon="mdi-email"
+            required
+        ></v-text-field>
       </div>
 
       <div class="form-group">
@@ -21,6 +38,7 @@
           v-model="userInput.password1"
           label="Password"
           name="Password1"
+          prepend-icon="mdi-lock"
           type="password"
           required
         ></v-text-field>
@@ -31,6 +49,7 @@
           v-model="userInput.password2"
           label="Password Confirmation"
           name="password2"
+          prepend-icon="mdi-lock"
           type="password"
           required
         ></v-text-field>
@@ -49,7 +68,7 @@ export default {
     return {
       userInput: {
         username: "",
-        email:"",
+        email: "",
         password1: "",
         password2: ""
       }
@@ -60,12 +79,12 @@ export default {
   },
   computed: {
     ...mapGetters(["getErrors"])
-  },
+  }
 };
 </script>
 
 <style>
-    .errMessage {
-        list-style-type: none;
-    }
+.errMessage {
+  list-style-type: none;
+}
 </style>

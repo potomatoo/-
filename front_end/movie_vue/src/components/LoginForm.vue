@@ -12,11 +12,24 @@
       </div>
 
       <div class="form-group">
-        <v-text-field v-model="userData.username" label="Username" name="Username" required></v-text-field>
+        <v-text-field 
+					v-model="userData.username" 
+					label="Username" 
+					name="Username" 
+					prepend-icon="mdi-account"
+					required
+				></v-text-field>
       </div>
 
       <div class="form-group">
-        <v-text-field v-model="userData.password1" label="Password" name="Password" type="password" required></v-text-field>
+        <v-text-field 
+					v-model="userData.password1" 
+					label="Password" 
+					name="Password" 
+					prepend-icon="mdi-lock"
+					type="password" 
+					required
+				></v-text-field>
       </div>
       <div>
         <button>Login</button>
