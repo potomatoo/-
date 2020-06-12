@@ -29,9 +29,9 @@
 
       <div class="form-group">
         <v-text-field
-          v-model="userInput.password1"
+          v-model="userInput.password"
           label="Password"
-          name="Password1"
+          name="Password"
           prepend-icon="mdi-lock"
           type="password"
           required
@@ -40,9 +40,9 @@
 
       <div class="form-group m-0">
         <v-text-field
-          v-model="userInput.password2"
+          v-model="userInput.passwordConfirm"
           label="Password Confirmation"
-          name="password2"
+          name="Password Confirmation"
           prepend-icon="mdi-lock"
           type="password"
           required
@@ -64,8 +64,8 @@ export default {
       userInput: {
         username: "",
         email: "",
-        password1: "",
-        password2: ""
+        password: "",
+        passwordConfirm: ""
       }
     };
   },

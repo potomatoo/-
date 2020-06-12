@@ -23,7 +23,7 @@
 
       <div class="form-group m-0">
         <v-text-field
-          v-model="userData.password1"
+          v-model="userData.password"
           label="Password"
           name="Password"
           prepend-icon="mdi-lock"

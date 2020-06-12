@@ -8,7 +8,7 @@
 
     <v-navigation-drawer v-model="drawer" app clipped>
       <div class="pt-3">
-        <v-list-item-title v-if="isLoggedIn" class="text-center font-weight-bold"></v-list-item-title>
+        <v-list-item-title v-if="isLoggedIn" class="text-center font-weight-bold"> {{ username }} </v-list-item-title>
         <v-list-item-title v-else class="text-center font-weight-bold">Please Log in</v-list-item-title>
       </div>
 
@@ -60,7 +60,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-content class="row">
+    <v-content class="row m-0">
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col>
@@ -74,25 +74,32 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+
 export default {
   name: "App",
   methods: {
-    ...mapActions(["login", "logout"])
+    ...mapActions(["login", "logout"]),
+
+    getUsername() {
+      this.username = sessionStorage.getItem('username')
+    }
   },
   computed: {
     ...mapGetters(["isLoggedIn"])
   },
   props: {
-    source: String
+
   },
   data: () => ({
-    drawer: null
+    drawer: null,
+    username: null
   }),
-  created() {
-    this.$store.dispatch("initialLogin");
-  },
   updated() {
     this.$store.commit('clearErrors')
+
+    if (this.isLoggedIn) {
+      this.getUsername()
+    } 
   }
 };
 </script>

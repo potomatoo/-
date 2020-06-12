@@ -80,35 +80,41 @@ const actions = { // 비동기 처리 로직, mutation을 실행시키는 역할
         }
     },
 
-    signup: ( {commit, getters, dispatch }, {username, email, password1, password2}) => {
+    signup: ( {commit, getters, dispatch }, {username, email, password, passwordConfirm}) => {
         commit('clearErrors')
         if (getters.isLoggedIn) {
             router.push('/')
         }
         else {
-            console.log(username)
+            
             if (!username) {
                 commit('pushError', 'ID를 입력하세요')
             }
             if (!email) {
                 commit('pushError', 'E-mail을 입력하세요')
             }
-            if (password1.length < 8 ) {
+            if (password.length < 8 ) {
                 commit('pushError', '비밀번호는 8자 이상이어야합니다')
             }
             else {
-                if (password1 === password2) {
-                    axios.post(SERVER_URL + 'api/v1/user/', {username, email, password1})
+                if (password ===  passwordConfirm) {
+                    
+                    axios.post(`${SERVER_URL}/api/v1/user/`, {username, email, password})
                         .then(message => {
+                            console.log(message)
                             message
                             const userData = {
                                 username, 
-                                password1
+                                password
                             }
                             dispatch('login', userData)
                         })
                         .catch(err => {
-                            commit('pushError', err.response.status)
+                            if (!err.response) {
+                                commit('pushError', 'Network Error..')
+                            } else {
+                                commit('pushError', 'Some error occured');
+                            }
                         })
                 }
                 else {
