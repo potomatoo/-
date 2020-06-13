@@ -27,15 +27,15 @@
       <v-card-text>
         <div>
           <b>감독</b> |
-          <span>{{ director }},</span>
+          <span>{{ director }}</span>
         </div>
         <div>
           <b>배우</b> |
-          <span v-for="actor in actors" :key="actor">{{ actor }},</span>
+          <span v-for="actor in actors" :key="actor">{{ actor }}, </span>
         </div>
         <div>
           <b>장르</b> |
-          <span v-for="genre in genres" :key="genre">{{ genre }},</span>
+          <span v-for="genre in genres" :key="genre">{{ genre }}, </span>
         </div>
       </v-card-text>
 
@@ -67,7 +67,7 @@ export default {
   name: "MovieModalDetail",
   data() {
     return {
-      director: "",
+      director: this.movie.director,
       actors: [],
       genres: [],
 			video: [],

@@ -32,19 +32,19 @@ const actions = { // 비동기 처리 로직, mutation을 실행시키는 역할
     initialLogin: ({ commit }) => {
         const token = sessionStorage.getItem('jwt')
         const username = sessionStorage.getItem('username')
-        if (token == null) {
-            console.log('true')
+        if (token) {
             commit('setToken', token)
             commit('setUsername', username)
         }
-    },
+    }, 
 
-    logout: ({ commit }) => {  // 모든 세션 데이터들을 지우고 login 화면으로 redirect
-        commit('setToken', null)
+    logout: () => {  // 모든 세션 데이터들을 지우고 login 화면으로 redirect
+				sessionStorage.removeItem('jwt')
         sessionStorage.removeItem('username')
         sessionStorage.removeItem('my_movies')
         sessionStorage.removeItem('my_reviews')
-        router.push('/login')
+				router.push('/login')
+				location.reload(true)  // isLoggedin 상태를 변경시키기 위해
     },
 
     
@@ -73,48 +73,45 @@ const actions = { // 비동기 처리 로직, mutation을 실행시키는 역할
 
     signup: ( {commit, getters, dispatch }, {username, email, password, passwordConfirm}) => {
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    
         commit('clearErrors')
         console.log(password, passwordConfirm)
         if (getters.isLoggedIn) {
             router.push('/')
         }
         else {
+            let flag = true
             if (re.test(email) == false) {
                 commit('pushError', '이메일 형식이 올바르지 않습니다.')
-            }else{
-
-                if (password.length < 8 ) {
-                    commit('pushError', '비밀번호는 8자 이상이어야합니다')
-                    if (password !== password) {
-                        commit('pushError', '비밀번호가 일치하지 않습니다')
-                    }
-                }
-                
-                else {
-                    if (password === passwordConfirm) {
-                        axios.post(`${SERVER_URL}/api/v1/user/`, {username, email, password})
-                            .then(message => {
-                                console.log(message)
-                                const userData = {
-                                    username, 
-                                    password
-                                }
-                                dispatch('login', userData)
-                            })
-                            .catch(err => {
-                                if (!err.response) {
-                                    commit('pushError', 'Network Error..')
-                                } else {
-                                    commit('pushError', 'Some error occured');
-                                }
-                            })
-                    }
-                    else {
-                        commit('pushError', '비밀번호가 일치하지 않습니다')
-                    }
-                }
+                flag = false
             }
+            if (password.length < 8 ) {
+                commit('pushError', '비밀번호는 8자 이상이어야합니다')
+                flag = false
+            }
+            if (password !== passwordConfirm){
+                commit('pushError', '비밀번호가 일치하지 않습니다')
+                flag = false
+            }
+            if (flag) {
+                axios.post(`${SERVER_URL}/api/v1/user/`, {username, email, password})
+                    .then(message => {
+                        console.log(message)
+                        const userData = {
+                            username, 
+                            password
+                        }
+                        dispatch('login', userData)
+                    })
+                    .catch(err => {
+                        if (!err.response) {
+                            commit('pushError', 'Network Error..')
+                        } else {
+                            commit('pushError', 'username이 중복됩니다.');
+                        }
+                    })
+                
+            }
+                
         }
     }
 

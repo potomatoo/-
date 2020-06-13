@@ -91,7 +91,6 @@ export default {
 
   created() {
     this.$store.dispatch("initialLogin");
-    
   },
   updated() {
     this.$store.commit('clearErrors')
