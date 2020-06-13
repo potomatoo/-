@@ -60,7 +60,7 @@
 <script>
 import axios from "axios";
 const SERVER_URL = "http://localhost:8000";
-const API_KEY = "AIzaSyDW2plkwckgo3PaO5b2gFZEurVMzEWo-u8";
+const API_KEY = "AIzaSyAuJI_t1RcMzDDAl86DCk0L9yQIeaHVq5A";
 const API_URL = "https://www.googleapis.com/youtube/v3/search";
 
 export default {
