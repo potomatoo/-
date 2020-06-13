@@ -74,7 +74,6 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-
 export default {
   name: "App",
   methods: {
@@ -94,12 +93,11 @@ export default {
     drawer: null,
     username: null
   }),
+  created() {
+    this.$store.dispatch("initialLogin");
+  },
   updated() {
     this.$store.commit('clearErrors')
-
-    if (this.isLoggedIn) {
-      this.getUsername()
-    } 
   }
 };
 </script>
