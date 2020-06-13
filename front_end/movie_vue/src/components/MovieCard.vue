@@ -31,20 +31,24 @@
             hover
             size="18"
           ></v-rating>
-
-          <v-btn icon color="white">
-            <v-icon>mdi-chevron-down</v-icon>
-          </v-btn>
         </div>
       </v-fade-transition>
 
+      <v-dialog v-model="detail_show" width="600px" persistent>
+        <template v-slot:activator="{ on }">
+          <v-btn icon color="white" v-on="on">
+            <v-icon>mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+        <MovielModalDetail :movie="movie" @closeEvent="closeDetail" />
+      </v-dialog>
     </v-card>
   </v-hover>
 </template>
 
 <script>
 import axios from "axios";
-
+import MovielModalDetail from "@/components/MovieModalDetail.vue";
 const SERVER_URL = "http://localhost:8000";
 
 export default {
@@ -52,8 +56,13 @@ export default {
   data() {
     return {
       actors: [],
-      genres: []
+      genres: [],
+      detail_show: false
     };
+  },
+
+  components: {
+    MovielModalDetail
   },
 
   props: {
@@ -64,6 +73,11 @@ export default {
   },
 
   methods: {
+    closeDetail() {
+      this.detail_show = false;
+
+    },
+
     getActorName() {
       const token = sessionStorage.getItem("jwt");
       const options = {

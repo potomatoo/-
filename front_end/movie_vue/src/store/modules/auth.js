@@ -11,6 +11,7 @@ const state = {
 const getters = {
   isLoggedIn: state => !!state.token, // token값이 있는지 확인
   getErrors: state => state.errors,
+  getUsername: state => state.username,
 };
 
 const mutations = {  // setter 개념, 매개변수를 받을 수 있다, 순차적 로직, commit('함수명', '전달인자')로 실행가능
@@ -29,10 +30,12 @@ const mutations = {  // setter 개념, 매개변수를 받을 수 있다, 순차
 const actions = { // 비동기 처리 로직, mutation을 실행시키는 역할, dispatch('함수명', '전달인자')로 실행 가능
     // state 값을 변경하기 위해서는 commit 메소드를 호출해야한다.
     initialLogin: ({ commit }) => {
-        
         const token = sessionStorage.getItem('jwt')
-        if (token) {
+        const username = sessionStorage.getItem('username')
+        if (token == null) {
+            console.log('true')
             commit('setToken', token)
+            commit('setUsername', username)
         }
     },
 
@@ -68,60 +71,50 @@ const actions = { // 비동기 처리 로직, mutation을 실행시키는 역할
     
     pushError: ({ commit }, error) => commit('pushError', error),
 
-    validation: ({ commit, dispatch }, userData) => {
-        if (!userData.username) {
-            commit('pushError', 'username은 필수항목입니다!')
-        }
-        if (userData.password.length < 8 ) {
-            commit('pushError', 'password가 너무 짧습니다!')
-        }
-        else {
-            dispatch('login', userData)
-        }
-    },
-
     signup: ( {commit, getters, dispatch }, {username, email, password, passwordConfirm}) => {
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    
         commit('clearErrors')
+        console.log(password, passwordConfirm)
         if (getters.isLoggedIn) {
             router.push('/')
         }
         else {
-            
-            if (!username) {
-                commit('pushError', 'ID를 입력하세요')
-            }
-            if (!email) {
-                commit('pushError', 'E-mail을 입력하세요')
-            }
-            if (password.length < 8 ) {
-                commit('pushError', '비밀번호는 8자 이상이어야합니다')
-            }
-            else {
-                if (password ===  passwordConfirm) {
-                    
-                    axios.post(`${SERVER_URL}/api/v1/user/`, {username, email, password})
-                        .then(message => {
-                            console.log(message)
-                            message
-                            const userData = {
-                                username, 
-                                password
-                            }
-                            dispatch('login', userData)
-                        })
-                        .catch(err => {
-                            if (!err.response) {
-                                commit('pushError', 'Network Error..')
-                            } else {
-                                commit('pushError', 'Some error occured');
-                            }
-                        })
-                }
-                else {
-                    commit('pushError', '비밀번호가 일치하지 않습니다')
-                }
-            }
+            if (re.test(email) == false) {
+                commit('pushError', '이메일 형식이 올바르지 않습니다.')
+            }else{
 
+                if (password.length < 8 ) {
+                    commit('pushError', '비밀번호는 8자 이상이어야합니다')
+                    if (password !== password) {
+                        commit('pushError', '비밀번호가 일치하지 않습니다')
+                    }
+                }
+                
+                else {
+                    if (password === passwordConfirm) {
+                        axios.post(`${SERVER_URL}/api/v1/user/`, {username, email, password})
+                            .then(message => {
+                                console.log(message)
+                                const userData = {
+                                    username, 
+                                    password
+                                }
+                                dispatch('login', userData)
+                            })
+                            .catch(err => {
+                                if (!err.response) {
+                                    commit('pushError', 'Network Error..')
+                                } else {
+                                    commit('pushError', 'Some error occured');
+                                }
+                            })
+                    }
+                    else {
+                        commit('pushError', '비밀번호가 일치하지 않습니다')
+                    }
+                }
+            }
         }
     }
 

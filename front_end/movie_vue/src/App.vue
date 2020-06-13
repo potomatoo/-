@@ -8,8 +8,7 @@
 
     <v-navigation-drawer v-model="drawer" app clipped>
       <div class="pt-3">
-        <v-list-item-title v-if="isLoggedIn" class="text-center font-weight-bold"> {{ username }} </v-list-item-title>
-        <v-list-item-title v-else class="text-center font-weight-bold">Please Log in</v-list-item-title>
+        <v-list-item-title v-if="!isLoggedIn" class="text-center font-weight-bold">Please Log in</v-list-item-title>
       </div>
 
       <v-list dense v-if="isLoggedIn">
@@ -79,9 +78,6 @@ export default {
   methods: {
     ...mapActions(["login", "logout"]),
 
-    getUsername() {
-      this.username = sessionStorage.getItem('username')
-    }
   },
   computed: {
     ...mapGetters(["isLoggedIn"])
@@ -91,10 +87,11 @@ export default {
   },
   data: () => ({
     drawer: null,
-    username: null
   }),
+
   created() {
     this.$store.dispatch("initialLogin");
+    
   },
   updated() {
     this.$store.commit('clearErrors')
