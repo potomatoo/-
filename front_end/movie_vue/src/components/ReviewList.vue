@@ -134,7 +134,7 @@ export default {
     ...mapGetters(["isLoggedIn"])
   },
 
-  created() {
+  updated() {
     this.getMovieName();
   }
 };

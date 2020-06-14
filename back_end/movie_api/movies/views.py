@@ -83,7 +83,7 @@ def genre_detail(request, genre_pk):
 
 @api_view(['GET'])
 def review_list(request):
-    reviews = Review.objects.all()
+    reviews = Review.objects.all()    
     serializer = ReviewSerializer(reviews, many=True)
     return Response(serializer.data)
 
