@@ -8,6 +8,7 @@ from rest_framework.permissions import AllowAny # 회원가입은 인증 X
 from .models import *
 from .serializers import *
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
 # .../user/
@@ -82,18 +83,28 @@ def genre_detail(request, genre_pk):
     return Response(genre_serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def review_list(request):
-    reviews = Review.objects.all()    
+    reviews = Review.objects.all()
     serializer = ReviewSerializer(reviews, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def movie_review(request, movie_pk):
+    reviews = Review.objects.filter(movie=movie_pk)
+    serializer = ReviewSerializer(reviews, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def detail_review_list(request, review_pk):
     review = get_object_or_404(Review, pk=review_pk)
     serializer = ReviewSerializer(review, many=False)
     return Response(serializer.data)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_review(request):
     serializer = ReviewSerializer(data=request.data)    
     if serializer.is_valid():
@@ -101,20 +112,58 @@ def create_review(request):
     return Response(serializer.data)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def update_review(request, review_pk):    
     review = get_object_or_404(Review, pk=review_pk)   
     serializer = ReviewSerializer(instance=review, data=request.data)    
+    if serializer.is_valid() and request.user == review.user:
+        serializer.save()
+        return Response(serializer.data)
+    else:
+        return Response(False)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_review(request, review_pk):    
+    review = get_object_or_404(Review, pk=review_pk)
+    if request.user == review.user:
+        review.delete()
+        return Response('REVIEW DELETE!!')
+    else:
+        return Response(False)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def comment_list(request, review_pk):
+    comments = Comment.objects.filter(review=review_pk)
+    serializer = CommentSerializer(comments, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_comment(request):
+    serializer = CommentSerializer(data=request.data)    
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_comment(request, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk)   
+    serializer = CommentSerializer(instance=comment, data=request.data)    
+    if serializer.is_valid() and request.user == comment.user:
+        serializer.save()
+        return Response(serializer.data)
+    else:
+        return Response(False)
+
 @api_view(['DELETE'])
-def delete_review(request, review_pk):    
-    review = get_object_or_404(Review, pk=review_pk)
-    review.delete()
-
-    return Response('DELETE!!')
-
-
-    
-
+@permission_classes([IsAuthenticated])
+def delete_comment(request, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk)
+    if request.user == comment.user:        
+        comment.delete()
+        return Response('COMMENT DELETE!!')
+    else:
+        return Response(False)

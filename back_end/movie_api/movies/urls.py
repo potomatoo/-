@@ -17,8 +17,15 @@ urlpatterns = [
     path('genre/<int:genre_pk>/', views.genre_detail, name='genre_detail'),
 
     path('review/', views.review_list, name='review_list'),
+    path('movie/<int:movie_pk>/review/', views.movie_review, name='movie_review'),
     path('review/<int:review_pk>/', views.detail_review_list, name='detail_review_list'),
     path('review/create/', views.create_review, name='create_review'),    
     path('review/<int:review_pk>/update/', views.update_review, name='update_review'),
     path('review/<int:review_pk>/delete/', views.delete_review, name='delete_review'),
+
+    path('review/<int:review_pk>/comment/', views.comment_list, name='comment_list'),
+    path('comment/create/', views.create_comment, name='create_comment'),
+    path('comment/<int:comment_pk>/update/', views.update_comment, name='update_comment'),
+    path('comment/<int:comment_pk>/delete/', views.delete_comment, name='delete_comment'),
+
 ]
