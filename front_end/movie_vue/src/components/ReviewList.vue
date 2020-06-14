@@ -1,34 +1,31 @@
 <template>
   <v-layout row wrap>
     <v-flex xs6>
-      <v-text-field
-        append-icon="search"
-        label="Filter"
-        single-line
-        hide-details
-        @input="filterSearch"
-      ></v-text-field>
+      <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
     </v-flex>
 
-    <v-flex xs10>
-      <v-data-table
-        :headers="headers"
-        :items="reviews"
-        :item-key="movie"
-        :search="filters"
-        :custom-filter="customFilter"
-      >
-        <template slot="headers" slot-scope="props">
-          <tr>
-            <th v-for="header in props.headers" :key="header.text">{{ header.text }}</th>
-          </tr>
-        </template>
-
+    <v-flex xs12>
+      <v-data-table :headers="headers" :items="reviews" :search="search">
         <template slot="items" slot-scope="props">
           <tr>
             <td>{{ props.item.movie }}</td>
+            <td class="text-xs-right">{{ props.item.id }}</td>
+            <td class="text-xs-right">{{ props.item.movie }}</td>
+            <td class="text-xs-right">{{ props.item.title }}</td>
+            <td class="text-xs-right">{{ props.item.content }}</td>
           </tr>
         </template>
+
+        <v-alert 
+            class="mt-3"
+            slot="no-results"
+            text
+            dense
+            color="info"
+            icon="mdi-magnify"
+            border="left"
+        >Your search for "{{ search }}" found no results
+        </v-alert>
       </v-data-table>
     </v-flex>
   </v-layout>
@@ -48,9 +45,7 @@ export default {
 
   data() {
     return {
-      filters: {
-        search: ""
-      },
+      search: "",
 
       headers: [
         {
@@ -87,28 +82,6 @@ export default {
   },
 
   methods: {
-    customFilter(items, filters, filter, headers) {
-      // Init the filter class.
-      const cf = new this.$MultiFilters(items, filters, filter, headers);
-
-      cf.registerFilter("search", function(searchWord, items) {
-        if (searchWord.trim() === "") return items;
-
-        return items.filter(item => {
-            console.log(item)
-          return item.movie.toLowerCase().includes(searchWord.toLowerCase());
-        }, searchWord);
-      });
-
-      return cf.runFilters();
-    },
-
-    filterSearch(val) {
-      this.filters = this.$MultiFilters.updateFilters(this.filters, {
-        search: val
-      });
-    },
-
     getMovieName() {
       const token = sessionStorage.getItem("jwt");
       const options = {
@@ -120,7 +93,6 @@ export default {
         axios
           .get(`${SERVER_URL}/api/v1/movie/${review.movie}`, options)
           .then(res => {
-            console.log(res.data.title);
             this.reviews[index].movie = res.data.title;
           })
           .catch(error => {
