@@ -4,7 +4,7 @@
   align="center"
   justify="center"
   >
-    <v-col cols="4">
+    <v-col cols="6">
       <LoginForm />
     </v-col>
   </v-row>

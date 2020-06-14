@@ -7,8 +7,11 @@ import store from './store'
 import VueSession from 'vue-session'
 import vuetify from './plugins/vuetify';
 
+import MultiFiltersPlugin from './plugins/MultiFilters' 
+
 Vue.config.productionTip = false
 Vue.use(VueSession)
+Vue.use(MultiFiltersPlugin)
 
 new Vue({
   router,

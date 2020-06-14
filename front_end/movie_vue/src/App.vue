@@ -8,8 +8,8 @@
 
     <v-navigation-drawer v-model="drawer" app clipped>
       <div class="pt-3">
-        <v-list-item-title v-if="isLoggedIn" class="text-center font-weight-bold"> {{ username }} </v-list-item-title>
-        <v-list-item-title v-else class="text-center font-weight-bold">Please Log in</v-list-item-title>
+        <v-list-item-title v-if="!isLoggedIn" class="text-center font-weight-bold">Please Log in</v-list-item-title>
+        <v-list-item-title v-else class="text-center font-weight-bold"> {{username}}</v-list-item-title>
       </div>
 
       <v-list dense v-if="isLoggedIn">
@@ -19,6 +19,15 @@
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Movie List</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item link to="/community">
+          <v-list-item-action>
+            <v-icon>mdi-movie-open</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Community</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -79,9 +88,6 @@ export default {
   methods: {
     ...mapActions(["login", "logout"]),
 
-    getUsername() {
-      this.username = sessionStorage.getItem('username')
-    }
   },
   computed: {
     ...mapGetters(["isLoggedIn"])
@@ -89,15 +95,22 @@ export default {
   props: {
 
   },
-  data: () => ({
-    drawer: null,
-    username: null
-  }),
+  // data: () => ({
+  //   drawer: null,
+  // }),
+  data() {
+    return {
+      drawer: null,
+      username: null,
+    }
+  },
+
   created() {
     this.$store.dispatch("initialLogin");
   },
   updated() {
     this.$store.commit('clearErrors')
+    this.username = sessionStorage.getItem('username')
   }
 };
 </script>
