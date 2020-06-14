@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # my App
-    'movies'
+    'movies',
+    
 ]
 
 REST_FRAMEWORK = {

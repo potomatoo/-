@@ -31,3 +31,9 @@ class UserCreationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'password',)
+
+class ReviewSerializer(serializers.ModelSerializer):        
+    class Meta:
+        model = Review
+        fields = '__all__'
+        

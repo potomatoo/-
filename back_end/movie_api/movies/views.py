@@ -80,3 +80,41 @@ def genre_detail(request, genre_pk):
     genre = get_object_or_404(Genre, pk=genre_pk)
     genre_serializer = GenreSerializer(genre)
     return Response(genre_serializer.data)
+
+@api_view(['GET'])
+def review_list(request):
+    reviews = Review.objects.all()
+    serializer = ReviewSerializer(reviews, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def detail_review_list(request, review_pk):
+    review = get_object_or_404(Review, pk=review_pk)
+    serializer = ReviewSerializer(review, many=False)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def create_review(request):
+    serializer = ReviewSerializer(data=request.data)    
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def update_review(request, review_pk):    
+    review = get_object_or_404(Review, pk=review_pk)   
+    serializer = ReviewSerializer(instance=review, data=request.data)    
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+@api_view(['DELETE'])
+def delete_review(request, review_pk):    
+    review = get_object_or_404(Review, pk=review_pk)
+    review.delete()
+
+    return Response('DELETE!!')
+
+
+    
+

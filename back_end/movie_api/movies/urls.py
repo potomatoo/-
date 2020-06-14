@@ -15,4 +15,10 @@ urlpatterns = [
 
     path('genre/', views.genre, name='genre'),
     path('genre/<int:genre_pk>/', views.genre_detail, name='genre_detail'),
+
+    path('review/', views.review_list, name='review_list'),
+    path('review/<int:review_pk>/', views.detail_review_list, name='detail_review_list'),
+    path('review/create/', views.create_review, name='create_review'),    
+    path('review/<int:review_pk>/update/', views.update_review, name='update_review'),
+    path('review/<int:review_pk>/delete/', views.delete_review, name='delete_review'),
 ]
