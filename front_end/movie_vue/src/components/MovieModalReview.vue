@@ -14,6 +14,7 @@
           readonly
           v-model="rating"
           color="orange"
+          half-increments
           background-color="orange lighten-3"
           size="30"
         ></v-rating>
@@ -27,7 +28,7 @@
           <v-textarea label="내용" v-model="content"></v-textarea>
         </v-col>
         <v-col cols class="mt-3">
-          <v-btn @click="createReview" @click.stop="closeReivew">
+          <v-btn @click="createReview" @click.stop="closeReview">
             <v-icon>mdi-pencil</v-icon>작성하기
           </v-btn>
         </v-col>
@@ -62,7 +63,7 @@ export default {
   },
 
   methods: {
-    closeReivew() {
+    closeReview() {
       this.$emit("closeReview", true);
     },
 
@@ -82,14 +83,12 @@ export default {
         movie: this.movie.id,
         user: user_id
       };
-        console.log(data)
-      axios.post(reviewURL, data, options).then((res) => {
-          console.log(res)
+      console.log(data);
+      axios.post(reviewURL, data, options).then(res => {
+        console.log(res);
         this.$emit("reviewUpdateEvent", true);
       });
-    },
-
-    
+    }
   }
 };
 </script>
