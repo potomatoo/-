@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Signup from '../views/Signup.vue'
 import Profile from '../views/Profile.vue'
+import Community from '../views/Community.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ Vue.use(VueRouter)
     path: '/profile',
     name: 'profile',
     component: Profile
+  },
+  {
+    path: '/community',
+    name: 'community',
+    component: Community
   }
 ]
 
