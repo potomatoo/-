@@ -36,7 +36,6 @@ export default {
         };
         axios.get(`${SERVER_URL}/api/v1/review/`, options)
             .then(res => {
-                console.log(res)
                 this.reviews = res.data;
             })
                 .catch(error => {

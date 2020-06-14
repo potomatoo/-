@@ -1,7 +1,13 @@
 <template>
   <v-layout row wrap>
     <v-flex xs6>
-      <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+      ></v-text-field>
     </v-flex>
 
     <v-flex xs12>
@@ -16,16 +22,15 @@
           </tr>
         </template>
 
-        <v-alert 
-            class="mt-3"
-            slot="no-results"
-            text
-            dense
-            color="info"
-            icon="mdi-magnify"
-            border="left"
-        >Your search for "{{ search }}" found no results
-        </v-alert>
+        <v-alert
+          class="mt-3"
+          slot="no-results"
+          text
+          dense
+          color="info"
+          icon="mdi-magnify"
+          border="left"
+        >Your search for "{{ search }}" found no results</v-alert>
       </v-data-table>
     </v-flex>
   </v-layout>
