@@ -69,10 +69,10 @@
               <td class="text-xs-center">{{ props.item.title }}</td>
               <td class="text-xs-center">{{ props.item.user }}</td>
               <td class="justify-center">
-                <v-btn v-if="props.item.user === getUserId" icon class="mx-0" @click="editItem(props.item)">
+                <v-btn v-if="props.item.user === getMyUsername" icon class="mx-0" @click="editItem(props.item)">
                   <v-icon color="teal">mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn v-if="props.item.user === getUserId" icon class="mx-0" @click="deleteItem(props.item)">
+                <v-btn v-if="props.item.user === getMyUsername" icon class="mx-0" @click="deleteItem(props.item)">
                   <v-icon color="pink">mdi-delete</v-icon>
                 </v-btn>
               </td>
@@ -154,23 +154,24 @@ export default {
           axios
             .get(`${SERVER_URL}/api/v1/movie/${review.movie}`, options)
             .then(res => {
-              this.reviews[index].movie = res.data.title;
+							this.reviews[index].movie = res.data.title;
+							this.review.title_name = res.data.title
             })
             .catch(error => {
               console.log(error.response);
             });
         });
 
-        // this.reviews.forEach((review, index) => {
-        //   axios
-        //     .get(`${SERVER_URL}/api/v1/user/${review.user}`, options)
-        //     .then(res => {
-        //       this.reviews[index].user = res.data.username;
-        //     })
-        //     .catch(error => {
-        //       console.log(error.response);
-        //     });
-        // });
+        this.reviews.forEach((review, index) => {
+          axios
+            .get(`${SERVER_URL}/api/v1/user/${review.user}`, options)
+            .then(res => {
+              this.reviews[index].user = res.data.username;
+            })
+            .catch(error => {
+              console.log(error.response);
+            });
+        });
         this.updateCnt++;
       }
     },
@@ -272,11 +273,11 @@ export default {
       return this.editedIndex === -1 ? "새로운 리뷰 작성" : "리뷰 수정하기";
 		},
 		
-		getUserId() {
-			const token = sessionStorage.getItem("jwt");
-      const user_id = jwtDecode(token).user_id;
-			return user_id
-		}
+		getMyUsername() {
+			const username = sessionStorage.getItem("username");
+			return username
+		},
+
   },
 
   updated() {
@@ -286,7 +287,8 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
-    }
+		},
+		
   }
 };
 </script> 
