@@ -162,10 +162,13 @@ def create_comment(request, review_pk):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def update_comment(request, comment_pk):
+def update_comment(request, review_pk, comment_pk):
+    review = get_object_or_404(Review, pk=review_pk)
     comment = get_object_or_404(Comment, pk=comment_pk)   
     serializer = CommentSerializer(instance=comment, data=request.data)    
     if serializer.is_valid() and request.user == comment.user:
+        serializer.review = review
+        serializer.user = request.user
         serializer.save()
         return Response(serializer.data)
     else:
@@ -173,7 +176,7 @@ def update_comment(request, comment_pk):
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
-def delete_comment(request, comment_pk):
+def delete_comment(request, comment_pk):    
     comment = get_object_or_404(Comment, pk=comment_pk)
     if request.user == comment.user:        
         comment.delete()
