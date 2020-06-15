@@ -6,11 +6,10 @@ from .models import *
 # from django.contrib.auth.models import User
 User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):    
-    review_set = ReviewSerializer(many=True)
+class UserSerializer(serializers.ModelSerializer):        
     class Meta:
         model = User
-        fields = ('id', 'username', 'review_set', 'movies', 'is_staff')
+        fields = ('id', 'username', 'is_staff')
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,7 +24,7 @@ class ActorSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):       
     class Meta:
         model = Comment
-        fields = ('id', 'review', 'user', 'content',)
+        fields = ('id', 'review', 'user', 'content')
 
 class ReviewSerializer(serializers.ModelSerializer):     
     comments = CommentSerializer(many=True, read_only=True)  
