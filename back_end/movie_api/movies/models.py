@@ -46,8 +46,7 @@ class Review(models.Model):
     
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)    
-    review = models.ForeignKey(Review, related_name='comments', on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
+    review = models.ForeignKey(Review, related_name='comments', on_delete=models.CASCADE)    
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
