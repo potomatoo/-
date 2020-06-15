@@ -23,7 +23,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):     
     comments = CommentSerializer(many=True, read_only=True)
-    
     class Meta:
         model = Review
         fields = ('id', 'title', 'content', 'rank', 'movie', 'user', 'comments')
@@ -38,9 +37,10 @@ class MovieSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     movies = MovieSerializer(many=True)
+    review_set = ReviewSerializer(many=True)
     class Meta:
         model = User
-        fields = ('id', 'username', 'movies', 'is_staff')
+        fields = ('id', 'username', 'review_set', 'movies', 'is_staff')
 
 class UserCreationSerializer(serializers.ModelSerializer):
     class Meta:

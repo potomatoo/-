@@ -117,7 +117,7 @@
 
 								<v-col cols="12">
 									<ul>
-										<li v-for="comment in this.detailItem.commments" :key="comment.id"> {{comment}}</li>
+										<li v-for="comment in this.detailItem.comments" :key="comment.id"> {{comment.content}}</li>
 									</ul>
 								</v-col>
                 <v-card-actions>
@@ -245,23 +245,25 @@ export default {
   methods: {
 		addComment() {
 			const token = sessionStorage.getItem("jwt");
-      const user_id = jwtDecode(token).user_id;
+      // const user_id = jwtDecode(token).user_id;
       const review_id = this.reviews[this.detailIndex].id
-      const SERVER_URL = "http://localhost:8000";
+      const SERVER_URL = "http://localhost:8000/api/v1";
       const options = {
         headers: {
           Authorization: "JWT " + token
         }
       };
-      const data = {
-        content: this.commentContent,
-				user: user_id,
-				review: review_id
-      };
-      console.log(data);
-			axios.post(`${SERVER_URL}/review/${review_id}/comment/create/`, data, options)
+      // const data = {
+      //   content: this.commentContent,
+			// 	// user: user_id,
+			// 	// review: review_id
+      // };
+      // console.log(data);
+      console.log(review_id)
+			axios.post(`${SERVER_URL}/review/${review_id}/comment/create/`, this.commentContent, options)
 			.then(res => {
-        console.log(res)
+
+        console.log(res.data)
 			})
 			.catch(err => {
 				console.error(err)
@@ -282,10 +284,6 @@ export default {
         .get(`${SERVER_URL}/api/v1/review/`,options)
         .then(res => {
 					console.log(res.data)
-					// this.detailItem.movie = res.data[review_id].movie;
-					// this.detailItem.created_at = res.data[review_id].created_at
-					// this.detailItem.updated_at = res.data[review_id].updated_at
-					// this.detailItem.commments = res.data[review_id].commments
         })
         .catch(error => {
           console.log(error.response);
