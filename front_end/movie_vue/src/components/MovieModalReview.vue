@@ -64,7 +64,8 @@ export default {
 
   methods: {
     closeReview() {
-      this.$emit("closeReview", true);
+        console.log('close')
+      this.$emit("closeEvent", true);
     },
 
     createReview() {

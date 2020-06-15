@@ -1,7 +1,6 @@
 <template>
   <v-row align="center" justify="center">
     <v-col cols="10">
-      <LoginForm />
       <ReviewList :reviews="reviews" />
     </v-col>
   </v-row>

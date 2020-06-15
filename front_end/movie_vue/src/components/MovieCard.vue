@@ -9,7 +9,7 @@
 
       <v-fade-transition>
         <div
-          v-if="hover"
+          v-if="hover || rating !== 0"
           class="d-flex flex-column justify-content-center transition-fast-in-fast-out grey darken-4 v-card--reveal display-1 text-center white--text"
           style="height: 100%; width: 100%;"
         >
@@ -156,7 +156,7 @@ export default {
           this.reviews = res.data;
           this.reviews.forEach(review => {
             if (review.user === user_id) {
-              this.rating = review.score;
+              this.rating = review.rank;
             }
             axios
               .get(`http://localhost:8000/api/v1/user/${review.user}/`, options)
