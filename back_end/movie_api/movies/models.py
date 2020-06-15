@@ -10,8 +10,7 @@ class User(AbstractUser):
     pass
 
 class Genre(models.Model):
-    name = models.CharField(max_length=20)
-    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='genres', blank=True)
+    name = models.CharField(max_length=20)    
     def __str__ (self): 
         return self.name
 
