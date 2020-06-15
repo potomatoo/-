@@ -245,18 +245,16 @@ export default {
   methods: {
 		addComment() {
 			const token = sessionStorage.getItem("jwt");
-      const user_id = jwtDecode(token).user_id;
+      // const user_id = jwtDecode(token).user_id;
       const review_id = this.reviews[this.detailIndex].id
-      const SERVER_URL = "http://localhost:8000";
+      const SERVER_URL = "http://localhost:8000/api/v1";
       const options = {
         headers: {
           Authorization: "JWT " + token
         }
       };
       const data = {
-        content: this.commentContent,
-				user: user_id,
-				review: review_id
+        content: this.commentContent,                    
       };
       console.log(data);
 			axios.post(`${SERVER_URL}/review/${review_id}/comment/create/`, data, options)
