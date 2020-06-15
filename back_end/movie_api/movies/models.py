@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 # Create your models here.
 
-class User(AbstractUser):
+class User(AbstractUser):    
     def __str__ (self): 
         return self.username
     pass
@@ -16,6 +16,7 @@ class Genre(models.Model):
 
 class Actor(models.Model):
     name = models.CharField(max_length=50)
+    img_url = models.TextField()
     def __str__ (self): 
         return self.name
 

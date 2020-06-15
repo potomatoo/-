@@ -29,18 +29,23 @@ def user_info(request, user_pk):
     user_serializer = UserSerializer(user)
     return Response(user_serializer.data)
 
+@api_view(['GET'])
+def userlist(request):
+    users = User.objects.all()
+    user_serializer = UserSerializer(users, many=True)
+    return Response(user_serializer.data)
+
 # .../my_movies/
 @api_view(['GET'])
-def my_movies(request):
-    user = request.user
-    user_serializer = UserSerializer(user)
+def my_movies(request, user_pk):
+    user = Review.objects.filter(user=user_pk)   
+    user_serializer = ReviewSerializer(user, many=True)
     return Response(user_serializer.data)
 
 # .../movie/
 @api_view(['GET'])
 def movie(request):
     movies = Movie.objects.all()
-
     movie_serializer = MovieSerializer(movies, many=True)
     return Response(movie_serializer.data)
 

@@ -49,7 +49,16 @@
         </v-list-item>
       </v-list>
 
-      <v-list dense v-else>
+      <v-list-item dense v-if="isLoggedIn && username == 'admin'" link to="/AdminPosition">
+        <v-list-item-action>
+          <v-icon>mdi-movie-open</v-icon>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>Staff</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-list dense v-if="!isLoggedIn">
         <v-list-item link to="login">
           <v-list-item-action>
             <v-icon>mdi-account-check</v-icon>

@@ -161,16 +161,16 @@ export default {
             });
         });
 
-        // this.reviews.forEach((review, index) => {
-        //   axios
-        //     .get(`${SERVER_URL}/api/v1/user/${review.user}`, options)
-        //     .then(res => {
-        //       this.reviews[index].user = res.data.username;
-        //     })
-        //     .catch(error => {
-        //       console.log(error.response);
-        //     });
-        // });
+        this.reviews.forEach((review, index) => {
+          axios
+            .get(`${SERVER_URL}/api/v1/user/${review.user}`, options)
+            .then(res => {
+              this.reviews[index].user = res.data.username;
+            })
+            .catch(error => {
+              console.log(error.response);
+            });
+        });
         this.updateCnt++;
       }
     },
