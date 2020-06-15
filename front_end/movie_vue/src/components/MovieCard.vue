@@ -16,10 +16,10 @@
           <div>
             <h5 class="font-weight-bold">{{ movie.title }}</h5>
             <p
-              v-for="genre in genres"
+              v-for="genre in movie.genre"
               :key="genre.id"
               class="white--text card-genre m-0"
-            >{{ genre }}</p>
+            >{{ genre.name }}</p>
           </div>
           <div @click="review_show=true">
             <v-rating
@@ -31,9 +31,7 @@
               hover
               size="18"
             ></v-rating>
-
           </div>
-          
         </div>
       </v-fade-transition>
 
@@ -63,14 +61,12 @@ import axios from "axios";
 import jwtDecode from 'jwt-decode'
 import MovieModalDetail from "@/components/MovieModalDetail.vue";
 import MovieModalReview from "@/components/MovieModalReview.vue";
-const SERVER_URL = "http://localhost:8000";
+// const SERVER_URL = "http://localhost:8000";
 
 export default {
   name: "MovieCard",
   data() {
     return {
-      actors: [],
-      genres: [],
       reviews: [],
       rating: 0,
       detail_show: false,
@@ -99,43 +95,6 @@ export default {
       this.review_show = false;
     },
 
-    getActorName() {
-      const token = sessionStorage.getItem("jwt");
-      const options = {
-        headers: {
-          Authorization: "JWT " + token
-        }
-      };
-      this.movie.actors.forEach(code => {
-        axios
-          .get(`${SERVER_URL}/api/v1/actor/${code}`, options)
-          .then(res => {
-            this.actors.push(res.data.name);
-          })
-          .catch(error => {
-            console.log(error.response);
-          });
-      });
-    },
-
-    getGenreName() {
-      const token = sessionStorage.getItem("jwt");
-      const options = {
-        headers: {
-          Authorization: "JWT " + token
-        }
-      };
-      this.movie.genre.forEach(code => {
-        axios
-          .get(`${SERVER_URL}/api/v1/genre/${code}`, options)
-          .then(res => {
-            this.genres.push(res.data.name);
-          })
-          .catch(error => {
-            console.log(error.response);
-          });
-      });
-    },
 
     // rating한 적이 있는 영화는 별점 표시 (mount되는 시점에서 실행되는 함수)
     ratingCheck() {
@@ -172,10 +131,6 @@ export default {
     this.ratingCheck();
   },
 
-  created() {
-    this.getGenreName();
-    this.getActorName();
-  }
 };
 </script>
 
