@@ -35,7 +35,7 @@ class UserCreationSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):            
     class Meta:
         model = Review
-        fields = ('id', 'title', 'content', 'rank', 'movie', 'user')
+        fields = ('id', 'title', 'content', 'rank', 'movie', 'user', 'created_at', 'updated_at')
         
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

@@ -9,7 +9,11 @@ import vuetify from './plugins/vuetify';
 
 import MultiFiltersPlugin from './plugins/MultiFilters' 
 
+import VueMoment from 'vue-moment'
+
 Vue.config.productionTip = false
+
+Vue.use(VueMoment);
 Vue.use(VueSession)
 Vue.use(MultiFiltersPlugin)
 

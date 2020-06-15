@@ -40,7 +40,7 @@
               </div>
 
               <v-row>
-                <v-col cols="12">
+                <v-col cols="12" v-if="editedIndex < 0">
                   <v-select
                     v-model="select"
                     :items="movies"
@@ -70,6 +70,50 @@
       </v-flex>
     </v-layout>
 
+    <v-layout row wrap class="justify-space-around align-items-center">
+      <v-flex xs2>
+        <v-dialog v-model="detail_dialog" max-width="600px">
+          <v-card class="review-detail-modal" tile>
+            <v-card-title>
+              <span class="headline">리뷰 상세보기</span>
+            </v-card-title>
+
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <v-card-title>{{detailItem.title}}</v-card-title>
+                  <v-card-subtitle class="pb-0 mt-3">작성일: {{$moment(detailItem.created_at).format("YYYY년 MM월 DD일 hh시 mm분")}}</v-card-subtitle>
+                  <v-card-subtitle class="py-0">수정일: {{$moment(detailItem.updated_at).format("YYYY년 MM월 DD일 hh시 mm분")}}</v-card-subtitle>
+                </v-col>
+                <v-col cols="12">
+                  <v-card-text>{{detailItem.content}}</v-card-text>
+                </v-col>
+                <v-col cols="12">
+                  <div>
+                    <v-card-text class="d-inline">평점:</v-card-text>
+                    <v-rating
+                      class="d-inline"
+                      v-model="detailItem.rank"
+                      background-color="orange-lighten-3"
+                      color="orange"
+                      dense
+                      readonly
+                      half-increments
+                      size="20"
+                    ></v-rating>
+                  </div>
+                </v-col>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click.native="close">닫기</v-btn>
+                </v-card-actions>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-dialog>
+      </v-flex>
+    </v-layout>
+
     <v-layout row wrap>
       <v-flex xs12>
         <v-data-table :headers="headers" :items="reviews" :search="search">
@@ -77,7 +121,10 @@
             <tr>
               <td class="text-xs-center" style="width: 15px">{{ props.item.id }}</td>
               <td class="text-xs-center truncate">{{ props.item.movie }}</td>
-              <td class="text-xs-center">{{ props.item.title }}</td>
+              <td
+                class="text-xs-center table-link"
+                @click="showDetail(props.item)"
+              >{{ props.item.title }}</td>
               <td class="text-xs-center">{{ props.item.user }}</td>
               <td class="justify-center">
                 <v-btn
@@ -128,10 +175,11 @@ export default {
 
   data() {
     return {
-      dialog: false,
       updateCnt: 0,
-			search: "",
-			select: {"movie_id": 0, "movie_name": "dsfd"},
+      dialog: false,
+      detail_dialog: false,
+      search: "",
+      select: { movie_id: 0, movie_name: "dsfd" },
       headers: [
         { text: "#", align: "left", value: "id", sortable: true },
         { text: "Movie", align: "left", value: "movie", sortable: true },
@@ -139,6 +187,18 @@ export default {
         { text: "Username", align: "left", value: "user", sortable: false },
         { text: "Actions", value: "title", align: "left", sortable: false }
       ],
+      detailIndex: -1,
+      detailItem: {
+				title: "",
+				username: '',
+				created_at: '',
+				updated_at: '',
+        content: "",
+        movie: "",
+				user: "",
+				commments: [],
+        rank: 0
+      },
       editedIndex: -1,
       editedItem: {
         title: "",
@@ -153,8 +213,8 @@ export default {
         movie: "",
         user: "",
         rank: 0
-			},
-			movies: []
+      },
+      movies: []
     };
   },
 
@@ -165,6 +225,35 @@ export default {
   },
 
   methods: {
+    showDetail(item) {
+      this.detailIndex = this.reviews.indexOf(item);
+      this.detailItem = Object.assign({}, item);
+      const token = sessionStorage.getItem("jwt");
+      const user_id = jwtDecode(token).user_id;
+      const options = {
+        headers: {
+          Authorization: "JWT " + token
+        }
+      };
+      this.detailItem.user = user_id;
+      axios
+        .get(
+          `${SERVER_URL}/api/v1/review/${this.reviews[this.detailIndex].id}`,
+          options
+        )
+        .then(res => {
+					this.detailItem.movie = res.data.movie;
+					this.detailItem.created_at = res.data.created_at
+					this.detailItem.updated_at = res.data.updated_at
+					this.detailItem.commments = res.data.commments
+        })
+        .catch(error => {
+          console.log(error.response);
+        });
+
+      this.detail_dialog = true;
+    },
+
     changeIdToName() {
       if (this.updateCnt === 0) {
         const token = sessionStorage.getItem("jwt");
@@ -177,8 +266,8 @@ export default {
           axios
             .get(`${SERVER_URL}/api/v1/movie/${review.movie}`, options)
             .then(res => {
-							this.reviews[index].movie = res.data.title;
-							this.review.title_name = res.data.title
+              this.reviews[index].movie = res.data.title;
+              this.review.title_name = res.data.title;
             })
             .catch(error => {
               console.log(error.response);
@@ -238,20 +327,25 @@ export default {
           Authorization: "JWT " + token
         }
       };
-      axios.delete(`${SERVER_URL}/api/v1/review/${this.reviews[index].id}/delete/`,options)
+      axios
+        .delete(
+          `${SERVER_URL}/api/v1/review/${this.reviews[index].id}/delete/`,
+          options
+        )
         .then(res => {
           console.log(res);
-					location.reload(true);
+          location.reload(true);
         })
         .catch(error => {
-					console.log('error')
-					alert("자신의 글만 삭제할 수 있습니다.")
+          console.log("error");
+          alert("자신의 글만 삭제할 수 있습니다.");
           console.log(error.response);
         });
     },
 
     close() {
       this.dialog = false;
+      this.detail_dialog = false;
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
@@ -276,74 +370,71 @@ export default {
             options
           )
           .then(res => {
-						console.log(res)
+            console.log(res);
           })
           .catch(error => {
-						console.log(error.response);
+            console.log(error.response);
           });
       } else {
-				const token = sessionStorage.getItem("jwt");
-				const user_id = jwtDecode(token).user_id;
-				const reviewURL = "http://localhost:8000/api/v1/review/create/";
-				const options = {
-					headers: {
-						Authorization: "JWT " + token
-					}
-				};
-				const data = {
-					title: this.editedItem.title,
-					content: this.editedItem.content,
-					rank: this.editedItem.rank,
-					movie: this.select.movie_id,
-					user: user_id
-				};
-				axios.post(reviewURL, data, options).then(res => {
-					console.log(res);
-				})
-				.catch(err => {
-					console.error(err)
-				});
-
+        const token = sessionStorage.getItem("jwt");
+        const user_id = jwtDecode(token).user_id;
+        const reviewURL = "http://localhost:8000/api/v1/review/create/";
+        const options = {
+          headers: {
+            Authorization: "JWT " + token
+          }
+        };
+        const data = {
+          title: this.editedItem.title,
+          content: this.editedItem.content,
+          rank: this.editedItem.rank,
+          movie: this.select.movie_id,
+          user: user_id
+        };
+        axios
+          .post(reviewURL, data, options)
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            console.error(err);
+          });
       }
       this.close();
-			location.reload(true);
-		},
+      location.reload(true);
+    },
 
-		getMovies() {
-			const token = sessionStorage.getItem("jwt");
-			const SERVER_URL = "http://localhost:8000";
-			const options = {
-				headers: {
-					Authorization: "JWT " + token
-				}
-			}
-			axios.get(`${SERVER_URL}/api/v1/movie/`, options)
-				.then(res => {
-          const temp_movies = res.data;
-          temp_movies.forEach(movie => {
-            this.movies.push({"movie_id": movie.id, "movie_name": movie.title})
-          });
+    getMovies() {
+      const token = sessionStorage.getItem("jwt");
+      const SERVER_URL = "http://localhost:8000";
+      const options = {
+        headers: {
+          Authorization: "JWT " + token
+        }
+      };
+      axios.get(`${SERVER_URL}/api/v1/movie/`, options).then(res => {
+        const temp_movies = res.data;
+        temp_movies.forEach(movie => {
+          this.movies.push({ movie_id: movie.id, movie_name: movie.title });
         });
-		}
-		
+      });
+    }
   },
-
   computed: {
     ...mapGetters(["isLoggedIn"]),
 
     formTitle() {
       return this.editedIndex === -1 ? "새로운 리뷰 작성" : "리뷰 수정하기";
 		},
-		
-		getMyUsername() {
-			const username = sessionStorage.getItem("username");
-			return username
-		},
 
+    getMyUsername() {
+      const username = sessionStorage.getItem("username");
+      return username;
+    }
   },
-	created() {
-		this.getMovies();
-	},
+  created() {
+    this.getMovies();
+  },
   updated() {
     this.changeIdToName();
   },
@@ -351,8 +442,7 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
-		},
-	
+    }
   }
 };
 </script> 
@@ -363,5 +453,15 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.table-link {
+  color: #0645ad;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.table-link:hover {
+  text-decoration: underline;
 }
 </style>

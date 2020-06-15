@@ -88,6 +88,7 @@ export default {
       axios.post(reviewURL, data, options).then(res => {
         console.log(res);
         this.$emit("reviewUpdateEvent", true);
+        
       });
     }
   }
