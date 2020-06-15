@@ -27,15 +27,15 @@
       <v-card-text>
         <div>
           <b>감독</b> |
-          <span>{{ director }}</span>
+          <span>{{ movie.director }}</span>
         </div>
         <div>
           <b>배우</b> |
-          <span v-for="actor in actors" :key="actor">{{ actor }}, </span>
+          <span v-for="actor in movie.actor" :key="actor">{{ actor.name }}, </span>
         </div>
         <div>
           <b>장르</b> |
-          <span v-for="genre in genres" :key="genre">{{ genre }}, </span>
+          <span v-for="genre in movie.genre" :key="genre">{{ genre.name }}, </span>
         </div>
       </v-card-text>
 
@@ -59,7 +59,6 @@
 
 <script>
 import axios from "axios";
-const SERVER_URL = "http://localhost:8000";
 const API_KEY = "AIzaSyAuJI_t1RcMzDDAl86DCk0L9yQIeaHVq5A";
 const API_URL = "https://www.googleapis.com/youtube/v3/search";
 
@@ -67,10 +66,6 @@ export default {
   name: "MovieModalDetail",
   data() {
     return {
-      director: this.movie.director,
-      actors: [],
-      genres: [],
-			video: [],
 			iframeSrc: ''
     };
   },
@@ -86,44 +81,7 @@ export default {
 			this.iframeSrc = ''
     },
 
-    getActorName() {
-      const token = sessionStorage.getItem("jwt");
-      const options = {
-        headers: {
-          Authorization: "JWT " + token
-        }
-      };
-      this.movie.actors.forEach(code => {
-        axios
-          .get(`${SERVER_URL}/api/v1/actor/${code}`, options)
-          .then(res => {
-            this.actors.push(res.data.name);
-          })
-          .catch(error => {
-            console.log(error.response);
-          });
-      });
-    },
-
-    getGenreName() {
-      const token = sessionStorage.getItem("jwt");
-      const options = {
-        headers: {
-          Authorization: "JWT " + token
-        }
-      };
-      this.movie.genre.forEach(code => {
-        axios
-          .get(`${SERVER_URL}/api/v1/genre/${code}`, options)
-          .then(res => {
-            this.genres.push(res.data.name);
-          })
-          .catch(error => {
-            console.log(error.response);
-          });
-      });
-    },
-
+   
     getTrailer() {
       const title = this.movie.title_en;
       axios
@@ -146,11 +104,6 @@ export default {
         });
     }
   },
-
-  created() {
-    this.getGenreName();
-    this.getActorName();
-	},
 
 	updated() {
     this.getTrailer();

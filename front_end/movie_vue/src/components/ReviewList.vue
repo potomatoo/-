@@ -103,6 +103,23 @@
                     ></v-rating>
                   </div>
                 </v-col>
+
+								<v-col cols="12">
+									<hr>
+									<v-textarea
+										label="Text"
+										filled
+										auto-grow
+										v-model="commentContent"
+									></v-textarea>
+									<v-btn color="primary" @click.native="addComment">댓글 작성</v-btn>
+								</v-col>
+
+								<v-col cols="12">
+									<ul>
+										<li v-for="comment in this.detailItem.commments" :key="comment.id"> {{comment}}</li>
+									</ul>
+								</v-col>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click.native="close">닫기</v-btn>
@@ -214,7 +231,8 @@ export default {
         user: "",
         rank: 0
       },
-      movies: []
+			movies: [],
+			commentContent: '',
     };
   },
 
@@ -225,27 +243,48 @@ export default {
   },
 
   methods: {
-    showDetail(item) {
-      this.detailIndex = this.reviews.indexOf(item);
-      this.detailItem = Object.assign({}, item);
-      const token = sessionStorage.getItem("jwt");
+		addComment() {
+			const token = sessionStorage.getItem("jwt");
       const user_id = jwtDecode(token).user_id;
+      const commentURL = "http://localhost:8000/api/v1/comment/create/";
       const options = {
         headers: {
           Authorization: "JWT " + token
         }
       };
-      this.detailItem.user = user_id;
+      const data = {
+        content: this.commentContent,
+				user: user_id,
+				// review: this.reviews[this.detailIndex].id
+      };
+      console.log(data);
+			axios.post(commentURL, data, options)
+			.then(res => {
+        console.log(res)
+			})
+			.catch(err => {
+				console.error(err)
+			})
+		},
+
+    showDetail(item) {
+      this.detailIndex = this.reviews.indexOf(item);
+      this.detailItem = Object.assign({}, item);
+      const token = sessionStorage.getItem("jwt");
+			// const review_id = this.reviews[this.detailIndex].id
+      const options = {
+				headers: {
+          Authorization: "JWT " + token
+        }
+      };
       axios
-        .get(
-          `${SERVER_URL}/api/v1/review/${this.reviews[this.detailIndex].id}`,
-          options
-        )
+        .get(`${SERVER_URL}/api/v1/review/`,options)
         .then(res => {
-					this.detailItem.movie = res.data.movie;
-					this.detailItem.created_at = res.data.created_at
-					this.detailItem.updated_at = res.data.updated_at
-					this.detailItem.commments = res.data.commments
+					console.log(res.data)
+					// this.detailItem.movie = res.data[review_id].movie;
+					// this.detailItem.created_at = res.data[review_id].created_at
+					// this.detailItem.updated_at = res.data[review_id].updated_at
+					// this.detailItem.commments = res.data[review_id].commments
         })
         .catch(error => {
           console.log(error.response);
