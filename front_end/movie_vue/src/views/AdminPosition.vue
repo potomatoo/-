@@ -1,6 +1,6 @@
 <template>
-  <v-row align="center" justify="center">
-    <v-col cols="10">
+  <v-row justify="center">
+    <v-col cols="12">
       <UserList :users="users" />
     </v-col>
   </v-row>

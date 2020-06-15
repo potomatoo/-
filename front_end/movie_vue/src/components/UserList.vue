@@ -6,7 +6,11 @@
         <table class="table table-hover">				
             <tbody>
                 <tr v-for="user in users" :key="user.id">						
-                    <td>{{ user.username }}</td>						
+                    <td>{{ user.username }}</td>
+                    <td>
+                        <input type="checkbox" id="checkbox" v-model="checked">
+                        <label for="checkbox">{{ checked }}</label>                   
+                    </td>						
                 </tr>
             </tbody>
         </table>
@@ -22,6 +26,11 @@ export default {
             type: Array
         }
     },
+    data() {
+        return {
+            checked: null,
+        }
+    },    
 }
 </script>
 
