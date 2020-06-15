@@ -73,7 +73,7 @@
     <v-layout row wrap class="justify-space-around align-items-center">
       <v-flex xs2>
         <v-dialog v-model="detail_dialog" max-width="600px">
-          <v-card class="review-detail-modal" tile>
+          <v-card class="review-detail-modal" tile >
             <v-card-title>
               <span class="headline">리뷰 상세보기</span>
             </v-card-title>
@@ -107,18 +107,30 @@
 								<v-col cols="12">
 									<hr>
 									<v-textarea
-										label="Text"
-										filled
-										auto-grow
+										label="comment"
+										no-resize
+                    rows="1"
 										v-model="commentContent"
 									></v-textarea>
-									<v-btn color="primary" @click.native="addComment">댓글 작성</v-btn>
+									<v-btn color="primary" justify="center" @click.native="addComment">댓글 작성</v-btn>
 								</v-col>
-
+                <hr>
 								<v-col cols="12">
-									<ul>
-										<li v-for="comment in this.detailItem.comments" :key="comment.id"> {{comment.content}}</li>
-									</ul>
+                  <v-list 
+                    style="max-height: 150px; border:solid black 1px" 
+                    class="overflow-y-auto p-2"
+                  >
+                    <template v-for="comment in this.detailItem.comments">
+                      <v-list-item 
+                        style="min-height:30px;"
+                        :key="comment.id" 
+                      >
+                        <span class="pr-3">{{comment.content}} -</span>
+                        <span class="font-italic text--secondary" v-html="comment.user"></span>
+
+                      </v-list-item>
+                    </template>
+                  </v-list>
 								</v-col>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -253,12 +265,6 @@ export default {
           Authorization: "JWT " + token
         }
       };
-      // const data = {
-      //   content: this.commentContent,
-			// 	// user: user_id,
-			// 	// review: review_id
-      // };
-      // console.log(data);
       console.log(review_id)
       const data = {
         content: this.commentContent,
@@ -268,6 +274,12 @@ export default {
 			axios.post(`${SERVER_URL}/review/${review_id}/comment/create/`, data, options)
 			.then(res => {
         console.log(res.data)
+        this.commentContent = ''
+        axios.get(`${SERVER_URL}/review/${review_id}/comment`, options)
+          .then( res => {
+            console.log(res.data)
+            this.detailItem.comments = res.data
+          })
 			})
 			.catch(err => {
 				console.error(err)
@@ -392,6 +404,7 @@ export default {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       }, 300);
+      location.reload(true);
     },
 
     save() {
@@ -484,6 +497,9 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
+    },
+    detail_dialog(val) {
+      val || this.close()
     }
   }
 };
