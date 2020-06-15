@@ -17,44 +17,55 @@
             <v-btn color="primary" darkx v-on="on">New Reivew</v-btn>
           </template>
 
-					<v-card class="movie-review-modal" tile>
-						<v-card-title>
-							<span class="headline">{{formTitle}}</span>
-						</v-card-title>
+          <v-card class="movie-review-modal" tile>
+            <v-card-title>
+              <span class="headline">{{formTitle}}</span>
+            </v-card-title>
 
-						<v-container fluid>
-							<div class="text-center py-3">
-								<h1> {{editedItem.movie}}</h1>
-							</div>
+            <v-container fluid>
+              <div class="text-center py-3">
+                <h1>{{editedItem.movie}}</h1>
+              </div>
 
-							<div class="text-center">
-								<v-rating
-									v-model="editedItem.rank"
-									background-color="orange-lighten-3"
-									color="orange"
-									dense
-									half-increments
-									hover
-									size="30"
-								></v-rating>
-							</div>
+              <div class="text-center">
+                <v-rating
+                  v-model="editedItem.rank"
+                  background-color="orange-lighten-3"
+                  color="orange"
+                  dense
+                  half-increments
+                  hover
+                  size="30"
+                ></v-rating>
+              </div>
 
-							<v-row>
-								<v-col cols="12">
-									<v-text-field label="제목" v-model="editedItem.title"></v-text-field>
-								</v-col>
-								<v-col cols="12">
-									<v-textarea label="내용" v-model="editedItem.content"></v-textarea>
-								</v-col>
-								<v-card-actions>
-									<v-spacer></v-spacer>
-									<v-btn color="blue darken-1" text @click.native="close">취소하기</v-btn>
-									<v-btn color="blue darken-1" text @click.native="save">수정하기</v-btn>
-								</v-card-actions>
-							</v-row>
-						</v-container>
-					</v-card>
-
+              <v-row>
+                <v-col cols="12">
+                  <v-select
+                    v-model="select"
+                    :items="movies"
+                    item-text="movie_name"
+                    item-value="id"
+                    label="영화 선택"
+                    persistent-hint
+                    return-object
+                    single-line
+                  ></v-select>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="제목" v-model="editedItem.title"></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-textarea label="내용" v-model="editedItem.content"></v-textarea>
+                </v-col>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click.native="close">취소하기</v-btn>
+                  <v-btn color="blue darken-1" text @click.native="save">작성하기</v-btn>
+                </v-card-actions>
+              </v-row>
+            </v-container>
+          </v-card>
         </v-dialog>
       </v-flex>
     </v-layout>
@@ -69,10 +80,20 @@
               <td class="text-xs-center">{{ props.item.title }}</td>
               <td class="text-xs-center">{{ props.item.user }}</td>
               <td class="justify-center">
-                <v-btn v-if="props.item.user === getMyUsername" icon class="mx-0" @click="editItem(props.item)">
+                <v-btn
+                  v-if="props.item.user === getMyUsername"
+                  icon
+                  class="mx-0"
+                  @click="editItem(props.item)"
+                >
                   <v-icon color="teal">mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn v-if="props.item.user === getMyUsername" icon class="mx-0" @click="deleteItem(props.item)">
+                <v-btn
+                  v-if="props.item.user === getMyUsername"
+                  icon
+                  class="mx-0"
+                  @click="deleteItem(props.item)"
+                >
                   <v-icon color="pink">mdi-delete</v-icon>
                 </v-btn>
               </td>
@@ -109,7 +130,8 @@ export default {
     return {
       dialog: false,
       updateCnt: 0,
-      search: "",
+			search: "",
+			select: {"movie_id": 0, "movie_name": "dsfd"},
       headers: [
         { text: "#", align: "left", value: "id", sortable: true },
         { text: "Movie", align: "left", value: "movie", sortable: true },
@@ -131,7 +153,8 @@ export default {
         movie: "",
         user: "",
         rank: 0
-      }
+			},
+			movies: []
     };
   },
 
@@ -259,11 +282,50 @@ export default {
 						console.log(error.response);
           });
       } else {
-				this.reviews.push(this.editedItem);
+				const token = sessionStorage.getItem("jwt");
+				const user_id = jwtDecode(token).user_id;
+				const reviewURL = "http://localhost:8000/api/v1/review/create/";
+				const options = {
+					headers: {
+						Authorization: "JWT " + token
+					}
+				};
+				const data = {
+					title: this.editedItem.title,
+					content: this.editedItem.content,
+					rank: this.editedItem.rank,
+					movie: this.select.movie_id,
+					user: user_id
+				};
+				axios.post(reviewURL, data, options).then(res => {
+					console.log(res);
+				})
+				.catch(err => {
+					console.error(err)
+				});
+
       }
       this.close();
 			location.reload(true);
-    }
+		},
+
+		getMovies() {
+			const token = sessionStorage.getItem("jwt");
+			const SERVER_URL = "http://localhost:8000";
+			const options = {
+				headers: {
+					Authorization: "JWT " + token
+				}
+			}
+			axios.get(`${SERVER_URL}/api/v1/movie/`, options)
+				.then(res => {
+          const temp_movies = res.data;
+          temp_movies.forEach(movie => {
+            this.movies.push({"movie_id": movie.id, "movie_name": movie.title})
+          });
+        });
+		}
+		
   },
 
   computed: {
@@ -279,7 +341,9 @@ export default {
 		},
 
   },
-
+	created() {
+		this.getMovies();
+	},
   updated() {
     this.changeIdToName();
   },
@@ -288,7 +352,7 @@ export default {
     dialog(val) {
       val || this.close();
 		},
-		
+	
   }
 };
 </script> 
