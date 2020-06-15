@@ -35,6 +35,12 @@ def userlist(request):
     user_serializer = UserSerializer(users, many=True)
     return Response(user_serializer.data)
 
+@api_view(['POST'])
+def is_staff(request, user_pk):
+    user = get_object_or_404(User, pk=user_pk)
+    user_serializer = UserSerializer(user, many=False)
+    return Response(user_serializer)
+
 # .../my_movies/
 @api_view(['GET'])
 def my_movies(request, user_pk):
@@ -53,7 +59,6 @@ def movie(request):
 @api_view(['GET'])
 def movie_detail(request, movie_pk):
     movie = Movie.objects.get(pk=movie_pk)
-
     movie_detail_serializer = MovieSerializer(movie)
     return Response(movie_detail_serializer.data)
 

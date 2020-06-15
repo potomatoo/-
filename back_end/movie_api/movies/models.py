@@ -3,7 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 # Create your models here.
 
-class User(AbstractUser):    
+class User(AbstractUser):  
+    is_staff = models.BooleanField(default=False)  
     def __str__ (self): 
         return self.username
     pass
@@ -36,7 +37,7 @@ class Movie(models.Model):
 
 class Review(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)    
+    movie = models.ForeignKey(Movie, related_name='reviews', on_delete=models.CASCADE)    
     title = models.CharField(max_length = 100)
     rank = models.FloatField()
     content = models.TextField()
@@ -45,7 +46,7 @@ class Review(models.Model):
     
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)    
-    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    review = models.ForeignKey(Review, related_name='comments', on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

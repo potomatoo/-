@@ -16,28 +16,33 @@ class ActorSerializer(serializers.ModelSerializer):
         model = Actor
         fields = ('id', 'name', 'movies')
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id', 'title', 'content', 'rank', 'movie', 'user')
+
+class ReviewSerializer(serializers.ModelSerializer):     
+    comments = CommentSerializer(many=True, read_only=True)       
+    class Meta:
+        model = Review
+        fields = ('id', 'title', 'content', 'rank', 'movie', 'user', 'comments')
+        
 class MovieSerializer(serializers.ModelSerializer):
+    genre = GenreSerializer(many=True, read_only=True)
+    actor = ActorSerializer(many=True, read_only=True)
+    reviews = ReviewSerializer(many=True, read_only=True)    
     class Meta:
         model = Movie
-        fields = ('id', 'title', 'title_en', 'img_url', 'description', 'director', 'actors', 'genre', 'users', 'open_date')
+        fields = ('id', 'title', 'title_en', 'img_url', 'description', 'director', 'actor', 'genre', 'users', 'open_date', 'reviews')
 
 class UserSerializer(serializers.ModelSerializer):
     movies = MovieSerializer(many=True)
     class Meta:
         model = User
-        fields = ('id', 'username', 'movies',)
+        fields = ('id', 'username', 'movies', 'is_staff')
 
 class UserCreationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'password',)
 
-class ReviewSerializer(serializers.ModelSerializer):            
-    class Meta:
-        model = Review
-        fields = ('id', 'title', 'content', 'rank', 'movie', 'user', 'created_at', 'updated_at')
-        
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ('id', 'title', 'content', 'rank', 'movie', 'user')
