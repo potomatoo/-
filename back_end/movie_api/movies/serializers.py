@@ -16,13 +16,13 @@ class ActorSerializer(serializers.ModelSerializer):
         model = Actor
         fields = ('id', 'name', 'movies')
 
-class CommentSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):       
     class Meta:
         model = Comment
-        fields = ('id', 'content', 'user')
+        fields = ('id', 'review', 'user', 'content',)
 
 class ReviewSerializer(serializers.ModelSerializer):     
-    comments = CommentSerializer(many=True, read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)    
     class Meta:
         model = Review
         fields = ('id', 'title', 'content', 'rank', 'movie', 'user', 'comments')
