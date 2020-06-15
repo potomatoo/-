@@ -7,7 +7,6 @@ class User(AbstractUser):
     is_staff = models.BooleanField(default=False)  
     def __str__ (self): 
         return self.username
-    pass
 
 class Genre(models.Model):
     name = models.CharField(max_length=20)    
@@ -45,7 +44,7 @@ class Review(models.Model):
     
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)    
-    review = models.ForeignKey(Review, related_name='comments', on_delete=models.CASCADE)    
-    content = models.TextField()
+    review = models.ForeignKey(Review, related_name='comments', on_delete=models.CASCADE)
+    content = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

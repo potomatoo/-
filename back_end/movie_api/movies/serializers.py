@@ -7,9 +7,10 @@ from .models import *
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):    
+    review_set = ReviewSerializer(many=True)
     class Meta:
         model = User
-        fields = ('id', 'username', 'is_staff')
+        fields = ('id', 'username', 'review_set', 'movies', 'is_staff')
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
