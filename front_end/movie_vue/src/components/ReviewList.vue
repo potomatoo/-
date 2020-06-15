@@ -245,27 +245,14 @@ export default {
   methods: {
 		addComment() {
 			const token = sessionStorage.getItem("jwt");
-<<<<<<< HEAD
-      // const user_id = jwtDecode(token).user_id;
-      const review_id = this.reviews[this.detailIndex].id
-      const SERVER_URL = "http://localhost:8000/api/v1";
-=======
-<<<<<<< HEAD
-      // const user_id = jwtDecode(token).user_id;
-      const review_id = this.reviews[this.detailIndex].id
-      const SERVER_URL = "http://localhost:8000/api/v1";
-=======
       const user_id = jwtDecode(token).user_id;
       const review_id = this.reviews[this.detailIndex].id
-      const SERVER_URL = "http://localhost:8000";
->>>>>>> d293290a54d90f55a430bf058e020556744a0ff2
->>>>>>> 0ce0b839c07aec00ac5406f5621a43034f6ed8e6
+      const SERVER_URL = "http://localhost:8000/api/v1";
       const options = {
         headers: {
           Authorization: "JWT " + token
         }
       };
-<<<<<<< HEAD
       // const data = {
       //   content: this.commentContent,
 			// 	// user: user_id,
@@ -273,22 +260,13 @@ export default {
       // };
       // console.log(data);
       console.log(review_id)
-			axios.post(`${SERVER_URL}/review/${review_id}/comment/create/`, this.commentContent, options)
-=======
       const data = {
-<<<<<<< HEAD
-        content: this.commentContent,                    
-=======
         content: this.commentContent,
 				user: user_id,
 				review: review_id
->>>>>>> d293290a54d90f55a430bf058e020556744a0ff2
       };
-      console.log(data);
 			axios.post(`${SERVER_URL}/review/${review_id}/comment/create/`, data, options)
->>>>>>> 0ce0b839c07aec00ac5406f5621a43034f6ed8e6
 			.then(res => {
-
         console.log(res.data)
 			})
 			.catch(err => {
