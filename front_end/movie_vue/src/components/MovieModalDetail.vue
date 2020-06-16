@@ -31,16 +31,16 @@
         </div>
         <div>
           <b>배우</b> |
-          <span v-for="actor in movie.actor" :key="actor">{{ actor.name }}, </span>
+          <span v-for="actor in movie.actors" :key="actor.id">{{ actor.name }}, </span>
         </div>
         <div>
           <b>장르</b> |
-          <span v-for="genre in movie.genre" :key="genre">{{ genre.name }}, </span>
+          <span v-for="genre in movie.genre" :key="genre.id">{{ genre.name }}, </span>
         </div>
       </v-card-text>
 
       <v-divider></v-divider>
-
+ r
       <v-expansion-panels accordion>
         <v-expansion-panel accordion>
           <v-expansion-panel-header>줄거리</v-expansion-panel-header>

@@ -127,7 +127,22 @@
                       >
                         <span class="pr-3">{{comment.content}} -</span>
                         <span class="font-italic text--secondary" v-html="comment.user"></span>
-
+                        <v-btn
+                          v-if="comment.user !== getMyUsername"
+                          text
+                          small
+                          class="mx-0 px-0"
+                        >
+                          EDIT
+                        </v-btn>
+                        <v-btn
+                          v-if="comment.user !== getMyUsername"
+                          text
+                          small
+                          class="mx-0 px-0"
+                        >
+                          DELETE
+                        </v-btn>
                       </v-list-item>
                     </template>
                   </v-list>
@@ -154,7 +169,7 @@
                 class="text-xs-center table-link"
                 @click="showDetail(props.item)"
               >{{ props.item.title }}</td>
-              <td class="text-xs-center">{{ props.item.user }}</td>
+              <td class="text-xs-center">{{ props.item.user.username }}</td>
               <td class="justify-center">
                 <v-btn
                   v-if="props.item.user === getMyUsername"
