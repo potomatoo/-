@@ -62,7 +62,7 @@ export default {
       };
       console.log(`${SERVER_URL}/api/v1/weather_recommend/`);
       axios
-        .get(`${SERVER_URL}/api/v1/weather_recommend/`, data, options)
+        .post(`${SERVER_URL}/api/v1/weather_recommend/`, data, options)
         .then(res => {
           console.log(res);
         });

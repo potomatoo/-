@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.db.models import Q
 from rest_framework.permissions import AllowAny # 회원가입은 인증 X
 
 from .models import *
@@ -10,6 +11,9 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
+
+import urllib
+import json
 
 # .../user/
 @api_view(['POST'])
@@ -55,27 +59,38 @@ def movie(request):
     movie_serializer = MovieSerializer(movies, many=True)
     return Response(movie_serializer.data)
 
-@api_view(['GET'])
-def weather_recommend(request):
-    import urllib
-    import json
-    from pprint import pprint
+@api_view(['GET', 'POST'])
+def weather_recommend(request):   
     ServiceKey = '7r002FWJrOZmqbjLfrDYopN40a1SRIbj9FycuHMeYBjc89qpG%2BMxPpH8HsJGui2edG23nhfPz9OVUWQRqW0QyA%3D%3D'
-    code = request.data['location_code']
-    print(location_code)
+    request = json.loads(request.body)
+    code = request['location_code']
+    print(code)
     url = f'http://apis.data.go.kr/1360000/VilageFcstMsgService/getLandFcst?serviceKey={ServiceKey}&pageNo=1&numOfRows=10&dataType=JSON&regId={code}&'
     request = urllib.request.Request(url)
     response = urllib.request.urlopen(request)
     rescode = response.getcode()
+    
     if(rescode==200):
         response_body = response.read()
-        print(response_body.decode('utf-8'))
-        dict = json.loads(response_body.decode('utf-8'))
-        pprint(dict)
+        dict = json.loads(response_body.decode('utf-8'))        
     else:
         print("Error Code:" + rescode)
+    is_rain = dict['response']['body']['items']['item'][1]['wf']
+    weather_status = dict['response']['body']['items']['item'][1]['rnYn']
+    
 
-    movies = Movie.objects.all().filter(genre=2)
+    if is_rain != 0:
+        movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 6) | Q(genre = 8) | Q(genre = 8))
+    else:
+        if weather_status == '맑음':
+            movies = Movie.objects.filter(Q(genre = 10) | Q(genre = 14) | Q(genre = 15))       
+            
+        elif weather_status == '구름많음':
+            movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 4))
+
+        elif weather_status == '흐림':
+            movies = Movie.objects.filter(Q(genre = 4) | Q(genre = 5) | Q(genre = 9))
+
     movie_serializer = MovieSerializer(movies, many=True)
     return Response(movie_serializer.data)
 
