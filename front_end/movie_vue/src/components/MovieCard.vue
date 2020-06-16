@@ -44,7 +44,7 @@
         />
       </v-dialog>
 
-      <v-dialog v-model="detail_show" width="600px" persistent>
+      <v-dialog v-model="detail_show" width="600px">
         <template v-slot:activator="{ on }">
           <v-btn icon color="white" v-on="on">
             <v-icon>mdi-chevron-down</v-icon>
@@ -118,7 +118,7 @@ export default {
               this.rating = review.rank;
             }
             axios
-              .get(`http://localhost:8000/api/v1/user/${review.user.id}/`, options)
+              .get(`http://localhost:8000/api/v1/user/${review.user}/`, options)
               .then(res => {
                 review.username = res.data.username;
               });

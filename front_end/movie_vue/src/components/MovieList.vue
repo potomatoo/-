@@ -31,6 +31,7 @@
 import MovieCard from "@/components/MovieCard.vue";
 import { mapGetters } from "vuex";
 
+
 export default {
   name: "MovieList",
   components: {

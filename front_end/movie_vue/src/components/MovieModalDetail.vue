@@ -1,5 +1,5 @@
 <template>
-  <v-card tile>
+  <v-card tile id="myModal">
     <v-card-title class="pb-0">
       <span class="headline">{{ movie.title }}</span>
     </v-card-title>
@@ -40,7 +40,7 @@
       </v-card-text>
 
       <v-divider></v-divider>
- r
+ 
       <v-expansion-panels accordion>
         <v-expansion-panel accordion>
           <v-expansion-panel-header>줄거리</v-expansion-panel-header>
@@ -59,14 +59,15 @@
 
 <script>
 import axios from "axios";
-const API_KEY = "AIzaSyAuJI_t1RcMzDDAl86DCk0L9yQIeaHVq5A";
+const API_KEY = "AIzaSyDq251SEuFTbzlAFosz3mqXb5XiBA94e4o";
 const API_URL = "https://www.googleapis.com/youtube/v3/search";
 
 export default {
   name: "MovieModalDetail",
   data() {
     return {
-			iframeSrc: ''
+      iframeSrc: '',
+      tempSrc: ''
     };
   },
   props: {
@@ -78,12 +79,14 @@ export default {
   methods: {
     closeDetail() {
 			this.$emit("closeEvent", true);
-			this.iframeSrc = ''
+      this.iframeSrc = ''
+      // this.iframeSrc = this.tempSrc
+      location.reload(true);
     },
 
-   
     getTrailer() {
       const title = this.movie.title_en;
+      console.log(title)
       axios
         .get(API_URL, {
           params: {
@@ -96,8 +99,10 @@ export default {
           }
         })
         .then(response => {
-					this.video = response.data.items[0];
-					this.iframeSrc = `http://www.youtube.com/embed/${this.video.id.videoId}`
+          this.video = response.data.items[0];
+          this.iframeSrc = `http://www.youtube.com/embed/${this.video.id.videoId}`
+          this.tempSrc = this.iframeSrc
+          console.log(this.iframeSrc)
         })
         .catch(error => {
           console.log(error);
@@ -105,11 +110,11 @@ export default {
     }
   },
 
-	updated() {
+	created() {
     this.getTrailer();
-		
 	}
 };
+
 
 
 </script>
