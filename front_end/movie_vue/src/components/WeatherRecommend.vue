@@ -17,11 +17,7 @@
         ></v-select>
       </v-flex>
       <v-flex xs3 class="d-flex justify-content-center">
-        <v-btn
-          class="ma-2"
-          color="secondary"
-          @click="getWeatherMovieList()"
-        >날씨기반 추천받기</v-btn>
+        <v-btn class="ma-2" color="secondary" @click="getWeatherMovieList()">날씨기반 추천받기</v-btn>
       </v-flex>
     </v-layout>
 
@@ -36,7 +32,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 
 export default {
   data() {
@@ -49,35 +45,41 @@ export default {
         { state: "광주", code: "11F20501" }
       ],
       weatherMovieList: []
-		};
-	},
+    };
+  },
 
-	methods: {
-		getWeatherMovieList(){
-			const API_URL = `/1360000/VilageFcstMsgService/getLandFcst?serviceKey=7r002FWJrOZmqbjLfrDYopN40a1SRIbj9FycuHMeYBjc89qpG%2BMxPpH8HsJGui2edG23nhfPz9OVUWQRqW0QyA%3D%3D&pageNo=1&numOfRows=10&dataType=JSON&regId=${this.select.code}&`
-			console.log(API_URL)
-			axios.post(API_URL)
-				.then(res => {
-					console.log(res)
-				})
-			
-			
-		}
-	},
-	watch: {
-		loader() {
-			const l = this.loader;
-			this[l] = !this[l];
+  methods: {
+    getWeatherMovieList() {
+      const token = sessionStorage.getItem("jwt");
+      const SERVER_URL = "http://localhost:8000";
+      const data = {
+        location_code: this.select.code
+      };
+      const options = {
+        headers: {
+          Authorization: "JWT " + token
+        }
+      };
+      console.log(`${SERVER_URL}/api/v1/weather_recommend/`);
+      axios
+        .get(`${SERVER_URL}/api/v1/weather_recommend/`, data, options)
+        .then(res => {
+          console.log(res);
+        });
+    }
+  },
+  watch: {
+    loader() {
+      const l = this.loader;
+      this[l] = !this[l];
 
-			setTimeout(() => (this[l] = false), 3000);
+      setTimeout(() => (this[l] = false), 3000);
 
-			this.loader = null;
-		}
-	}
-  
+      this.loader = null;
+    }
+  }
 };
 </script>
 
 <style>
-  
 </style>
