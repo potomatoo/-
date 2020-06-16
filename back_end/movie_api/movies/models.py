@@ -23,18 +23,19 @@ class Movie(models.Model):
     title = models.CharField(max_length=140)
     title_en = models.CharField(max_length=140)    
     director = models.CharField(max_length=100)
-    actors = models.ManyToManyField(Actor, related_name='movies', blank=True)
+    actors = models.ManyToManyField(Actor, related_name='actor_movies', blank=True)
     img_url = models.TextField()
     description = models.TextField()
     open_date = models.CharField(max_length=50)
-    genre = models.ManyToManyField(Genre, related_name='movies', blank=True)
-    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='movies', blank=True)
+    genre = models.ManyToManyField(Genre, related_name='genre_movies', blank=True)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='user_movies', blank=True)
 
     def __str__ (self): 
         return self.title
+     
 
 class Review(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_review', on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, related_name='reviews', on_delete=models.CASCADE)    
     title = models.CharField(max_length = 100)
     rank = models.FloatField()
@@ -43,13 +44,10 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
 class Comment(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comment_user', on_delete=models.CASCADE)    
     review = models.ForeignKey(Review, related_name='comments', on_delete=models.CASCADE)
     content = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-class Weather_recommend(models.Model):
-    movie = models.ForeignKey(Movie, related_name='weather', on_delete=models.CASCADE)
-    weather = models.CharField(max_length=50)
     

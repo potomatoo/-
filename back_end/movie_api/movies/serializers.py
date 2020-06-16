@@ -21,11 +21,10 @@ class ActorSerializer(serializers.ModelSerializer):
         model = Actor
         fields = ('id', 'name')
 
-class CommentSerializer(serializers.ModelSerializer): 
-    user = UserSerializer(read_only=True)      
+class CommentSerializer(serializers.ModelSerializer):          
     class Meta:
         model = Comment
-        fields = ('id', 'review', 'user', 'content')
+        fields = ('id', 'review', 'content', 'user')
 
 class ReviewSerializer(serializers.ModelSerializer):     
     comments = CommentSerializer(many=True, read_only=True)      
