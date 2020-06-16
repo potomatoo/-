@@ -61,7 +61,6 @@ import axios from "axios";
 import jwtDecode from 'jwt-decode'
 import MovieModalDetail from "@/components/MovieModalDetail.vue";
 import MovieModalReview from "@/components/MovieModalReview.vue";
-// const SERVER_URL = "http://localhost:8000";
 
 export default {
   name: "MovieCard",

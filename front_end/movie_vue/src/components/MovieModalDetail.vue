@@ -14,7 +14,7 @@
           <h5>트레일러</h5>
           <div class="embed-responsive embed-responsive-16by9">
             <iframe
-							id='yt-player'
+							id='myVideo'
               :src="this.iframeSrc"
               frameborder="0"
               class="embed-responsive-item"
@@ -59,6 +59,7 @@
 
 <script>
 import axios from "axios";
+import $ from 'jquery'
 const API_KEY = "AIzaSyDq251SEuFTbzlAFosz3mqXb5XiBA94e4o";
 const API_URL = "https://www.googleapis.com/youtube/v3/search";
 
@@ -78,10 +79,12 @@ export default {
   },
   methods: {
     closeDetail() {
-			this.$emit("closeEvent", true);
-      this.iframeSrc = ''
+      this.$emit("closeEvent", true);
+      $('iframe#myVideo').attr('src',''); 
+      $('iframe#myVideo').attr('src',this.iframeSrc);
+      // this.iframeSrc = ''
       // this.iframeSrc = this.tempSrc
-      location.reload(true);
+      // location.reload(true);
     },
 
     getTrailer() {
@@ -114,8 +117,7 @@ export default {
     this.getTrailer();
 	}
 };
-
-
+ 
 
 </script>
 
