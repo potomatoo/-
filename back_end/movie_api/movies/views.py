@@ -55,28 +55,28 @@ def movie(request):
     movie_serializer = MovieSerializer(movies, many=True)
     return Response(movie_serializer.data)
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def weather_recommend(request):
     import urllib
     import json
     from pprint import pprint
     ServiceKey = '7r002FWJrOZmqbjLfrDYopN40a1SRIbj9FycuHMeYBjc89qpG%2BMxPpH8HsJGui2edG23nhfPz9OVUWQRqW0QyA%3D%3D'
-    code = request.data['location_code']
-    print(location_code)
+    request = json.loads(request.body)
+    code = request['location_code']
+    print(code)
     url = f'http://apis.data.go.kr/1360000/VilageFcstMsgService/getLandFcst?serviceKey={ServiceKey}&pageNo=1&numOfRows=10&dataType=JSON&regId={code}&'
     request = urllib.request.Request(url)
     response = urllib.request.urlopen(request)
     rescode = response.getcode()
     if(rescode==200):
         response_body = response.read()
-        print(response_body.decode('utf-8'))
         dict = json.loads(response_body.decode('utf-8'))
         pprint(dict)
     else:
         print("Error Code:" + rescode)
 
-    movies = Movie.objects.all().filter(genre=2)
-    movie_serializer = MovieSerializer(movies, many=True)
+    # movies = Movie.objects.all().filter(genre=2)
+    # movie_serializer = MovieSerializer(movies, many=True)
     return Response(movie_serializer.data)
 
 
