@@ -126,10 +126,12 @@ def create_review(request, movie_pk):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def update_review(request, review_pk):    
+def update_review(request, movie_pk, review_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)    
     review = get_object_or_404(Review, pk=review_pk)   
     serializer = ReviewSerializer(instance=review, data=request.data)    
     if serializer.is_valid() and request.user == review.user:
+        serializer.movie = movie
         serializer.save()
         return Response(serializer.data)
     else:
