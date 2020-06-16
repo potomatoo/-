@@ -123,7 +123,8 @@ def detail_review_list(request, review_pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_review(request, movie_pk):
-    movie = get_object_or_404(Movie, pk=movie_pk)    
+    movie = get_object_or_404(Movie, pk=movie_pk)   
+     
     serializer = ReviewSerializer(data=request.data)    
     if serializer.is_valid(raise_exception=True):
         serializer.movie = movie
@@ -165,26 +166,13 @@ def comment_list(request, review_pk):
 @permission_classes([IsAuthenticated])
 def create_comment(request, review_pk):    
     review = get_object_or_404(Review, pk=review_pk)    
+    request.data['user'] = request.user
     serializer = CommentSerializer(data=request.data)    
     if serializer.is_valid(raise_exception=True):
         serializer.review = review
         serializer.user = request.user
         serializer.save()
         return Response(serializer.data)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def update_comment(request, review_pk, comment_pk):
-    review = get_object_or_404(Review, pk=review_pk)
-    comment = get_object_or_404(Comment, pk=comment_pk)   
-    serializer = CommentSerializer(instance=comment, data=request.data)    
-    if serializer.is_valid() and request.user == comment.user:
-        serializer.review = review
-        serializer.user = request.user
-        serializer.save()
-        return Response(serializer.data)
-    else:
-        return Response(False)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

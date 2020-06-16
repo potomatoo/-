@@ -2,20 +2,11 @@
   <div class="mx-auto" id="profile">
     
     <v-container>
-      <h2>{{ username }}'s</h2>
+      <h2>{{ username }}'s profile</h2>
       <v-row
         justify="center"
       >
-        <!-- <v-col cols="3">
-          <h3>Movie List</h3>
-          <Timeline :my_movies="my_movies"/>
-        </v-col> -->
-        <v-col cols="8">
-          <h3>Review List</h3>
-          <ReviewList :my_reviews="my_reviews"/>
-          <br>
-          <!-- <RecommandList :movies="reccomands"/> -->
-        </v-col>
+        <WeatherRecommend></WeatherRecommend>
       </v-row>
     </v-container>
     
@@ -25,13 +16,15 @@
 
 <script>
 // import Timeline from '../components/Timeline'
-import ReviewList from '../components/ReviewList'
+// import ReviewList from '../components/ReviewList'
 // import RecommandList from '../components/RecommandList'
+import WeatherRecommend from '../components/WeatherRecommend'
 import jwtDecode from 'jwt-decode'
 import { mapGetters } from 'vuex';
 import router from '../router';
 import axios from 'axios'
-const HOST = process.env.VUE_APP_SERVER_HOST;
+
+const SERVER_URL = 'http://localhost:8000'
 export default {
   name: "profile",
   
@@ -45,7 +38,8 @@ export default {
     }
   },
   components: {
-    ReviewList,
+    WeatherRecommend
+    // ReviewList,
   },
   methods: {
     getInfo() {
@@ -57,7 +51,7 @@ export default {
           Authorization: 'JWT ' + token
         }
       }
-      axios.get(HOST+'/api/v1/my_movies/', options)
+      axios.get(SERVER_URL+'/api/v1/my_movies/', options)
       .then(res => {
         this.reviews_info = res.data.review_set
         this.reviews_info.forEach(review => {

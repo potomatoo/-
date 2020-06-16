@@ -125,21 +125,14 @@
                         style="min-height:30px;"
                         :key="comment.id" 
                       >
-                        <span class="pr-3">{{comment.content}} -</span>
-                        <span class="font-italic text--secondary" v-html="comment.user"></span>
+                        <span class="pr-3">{{comment.content}}</span>
+                        <span class="font-italic text--secondary small"> - {{comment.user.username}}</span>
                         <v-btn
-                          v-if="comment.user !== getMyUsername"
+                          v-if="comment.user.id === getMyUserId"
                           text
                           small
-                          class="mx-0 px-0"
-                        >
-                          EDIT
-                        </v-btn>
-                        <v-btn
-                          v-if="comment.user !== getMyUsername"
-                          text
-                          small
-                          class="mx-0 px-0"
+                          class=" pr-0"
+                          @click="deleteComment(comment.id)"
                         >
                           DELETE
                         </v-btn>
@@ -164,15 +157,15 @@
           <template slot="item" slot-scope="props">
             <tr>
               <td class="text-xs-center" style="width: 15px">{{ props.item.id }}</td>
-              <td class="text-xs-center truncate">{{ props.item.movie }}</td>
+              <td class="text-xs-center truncate">{{ props.item.movie.title }}</td>
               <td
                 class="text-xs-center table-link"
                 @click="showDetail(props.item)"
               >{{ props.item.title }}</td>
-              <td class="text-xs-center">{{ props.item.user }}</td>
+              <td class="text-xs-center">{{ props.item.user.username }}</td>
               <td class="justify-center">
                 <v-btn
-                  v-if="props.item.user !== getMyUsername"
+                  v-if="props.item.user.username === getMyUsername"
                   icon
                   class="mx-0"
                   @click="editItem(props.item)"
@@ -180,7 +173,7 @@
                   <v-icon color="teal">mdi-pencil</v-icon>
                 </v-btn>
                 <v-btn
-                  v-if="props.item.user !== getMyUsername"
+                  v-if="props.item.user.username === getMyUsername"
                   icon
                   class="mx-0"
                   @click="deleteItem(props.item)"
@@ -213,6 +206,7 @@ import { mapGetters } from "vuex";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 const SERVER_URL = "http://localhost:8000";
+const token = sessionStorage.getItem("jwt");
 
 export default {
   name: "ReviewList",
@@ -223,15 +217,24 @@ export default {
       dialog: false,
       detail_dialog: false,
       search: "",
-      select: { movie_id: 0, movie_name: "dsfd" },
+      select: { movie_id: 0, movie_name: "---" },
       headers: [
-        { text: "#", align: "left", value: "id", sortable: true },
-        { text: "Movie", align: "left", value: "movie", sortable: true },
+        { text: "#", align: "left", value: "id", sortable: true, width: "1"},
+        { text: "Movie", align: "left", value: "movie.title", sortable: true },
         { text: "Title", align: "left", value: "title", sortable: false },
-        { text: "Username", align: "left", value: "user", sortable: false },
-        { text: "Actions", value: "title", align: "left", sortable: false }
+        { text: "Username", align: "left", value: "user.username", sortable: false },
+        { text: "Actions", value: "movie", align: "left", sortable: false }
       ],
       detailIndex: -1,
+      editedItem: {
+				title: "",
+				username: '',
+        content: "",
+        movie: "",
+				user: "",
+        rank: 0,
+        comments: []
+      },
       detailItem: {
 				title: "",
 				username: '',
@@ -244,14 +247,6 @@ export default {
         rank: 0
       },
       editedIndex: -1,
-      editedItem: [],
-      defaultItem: {
-        title: "",
-        content: "",
-        movie: "",
-        user: "",
-        rank: 0
-      },
 			movies: [],
 			commentContent: '',
     };
@@ -292,6 +287,28 @@ export default {
 			.catch(err => {
 				console.error(err)
 			})
+    },
+    
+    deleteComment(comment_id) {
+			const token = sessionStorage.getItem("jwt");
+      const review_id = this.reviews[this.detailIndex].id
+      const options = {
+        headers: {
+          Authorization: "JWT " + token
+        }
+      };
+			axios.delete(`${SERVER_URL}/api/v1/comment/${comment_id}/delete/`, options)
+			.then(res => {
+        console.log(res)
+        axios.get(`${SERVER_URL}/api/v1/review/${review_id}/comment/`, options)
+          .then( res => {
+            console.log(res.data)
+            this.detailItem.comments = res.data
+          })
+			})
+			.catch(err => {
+				console.error(err)
+			})
 		},
 
     showDetail(item) {
@@ -315,39 +332,7 @@ export default {
       this.detail_dialog = true;
     },
 
-    // changeIdToName() {
-    //   if (this.updateCnt === 0) {
-    //     const token = sessionStorage.getItem("jwt");
-    //     const options = {
-    //       headers: {
-    //         Authorization: "JWT " + token
-    //       }
-    //     };
-    //     this.reviews.forEach((review, index) => {
-    //       axios
-    //         .get(`${SERVER_URL}/api/v1/movie/${review.movie}`, options)
-    //         .then(res => {
-    //           this.reviews[index].movie = res.data.title;
-    //           this.review.title_name = res.data.title;
-    //         })
-    //         .catch(error => {
-    //           console.log(error.response);
-    //         });
-    //     });
-
-    //     this.reviews.forEach((review, index) => {
-    //       axios
-    //         .get(`${SERVER_URL}/api/v1/user/${review.user}`, options)
-    //         .then(res => {
-    //           this.reviews[index].user = res.data.username;
-    //         })
-    //         .catch(error => {
-    //           console.log(error.response);
-    //         });
-    //     });
-    //     this.updateCnt++;
-    //   }
-    // },
+    
 
     editItem(item) {
       this.editedIndex = this.reviews.indexOf(item);
@@ -396,7 +381,6 @@ export default {
           location.reload(true);
         })
         .catch(error => {
-          console.log("error");
           alert("자신의 글만 삭제할 수 있습니다.");
           console.log(error.response);
         });
@@ -437,7 +421,7 @@ export default {
       } else {
         const token = sessionStorage.getItem("jwt");
         const user_id = jwtDecode(token).user_id;
-        const reviewURL =  `${SERVER_URL}/api/v1/${this.select.movie_id}/review/create/`;
+        const reviewURL = `${SERVER_URL}/api/v1/${this.select.movie_id}/review/create/`;
         const options = {
           headers: {
             Authorization: "JWT " + token
@@ -460,7 +444,6 @@ export default {
           });
       }
       this.close();
-      // location.reload(true);
     },
 
     getMovies() {
@@ -478,6 +461,7 @@ export default {
       });
     }
   },
+  
   computed: {
     ...mapGetters(["isLoggedIn"]),
 
@@ -488,13 +472,17 @@ export default {
     getMyUsername() {
       const username = sessionStorage.getItem("username");
       return username;
+    },
+
+    getMyUserId() {
+       const user_id = jwtDecode(token).user_id;
+      return user_id;
     }
+
   },
+
   created() {
     this.getMovies();
-  },
-  updated() {
-    // this.changeIdToName();
   },
 
   watch: {

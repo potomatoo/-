@@ -21,7 +21,8 @@ class ActorSerializer(serializers.ModelSerializer):
         model = Actor
         fields = ('id', 'name')
 
-class CommentSerializer(serializers.ModelSerializer):       
+class CommentSerializer(serializers.ModelSerializer): 
+    user = UserSerializer(read_only=True)      
     class Meta:
         model = Comment
         fields = ('id', 'review', 'user', 'content')
