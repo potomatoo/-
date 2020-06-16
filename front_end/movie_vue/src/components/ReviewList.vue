@@ -128,10 +128,9 @@
                         <span class="pr-3">{{comment.content}}</span>
                         <span class="font-italic text--secondary small"> - {{comment.user.username}}</span>
                         <v-btn
-                          v-if="comment.user.id === getMyUserId"
+                          v-if="comment.user === getMyUserId"
                           text
                           small
-                          class=" pr-0"
                           @click="deleteComment(comment.id)"
                         >
                           DELETE
@@ -317,7 +316,7 @@ export default {
       const token = sessionStorage.getItem("jwt");
       const options = {
 				headers: {
-          Authorization: "JWT " + token
+          Authorization: "jwt " + token
         }
       };
       axios
@@ -475,8 +474,12 @@ export default {
     },
 
     getMyUserId() {
-       const user_id = jwtDecode(token).user_id;
-      return user_id;
+      if(token){
+        const user_id = jwtDecode(token).user_id;
+        return user_id;
+      } else {
+        return -1
+      }
     }
 
   },
