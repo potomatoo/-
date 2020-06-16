@@ -176,7 +176,7 @@ def update_review(request, movie_pk, review_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)    
     review = get_object_or_404(Review, pk=review_pk)   
     serializer = ReviewSerializer(instance=review, data=request.data)    
-    if serializer.is_valid() and request.user == review.user:
+    if serializer.is_valid(raise_exception=True):
         serializer.movie = movie
         serializer.save()
         return Response(serializer.data)
