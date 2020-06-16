@@ -27,23 +27,23 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'review', 'content', 'user')
 
 class ReviewSerializer(serializers.ModelSerializer):     
-    comments = CommentSerializer(many=True, read_only=True)      
+    comments = CommentSerializer(many=True, read_only=True, required=False)      
     class Meta:
         model = Review
         fields = ('id', 'title', 'content', 'rank', 'movie', 'user', 'comments')
 
 class MovieSerializer(serializers.ModelSerializer):
-    genre = GenreSerializer(many=True, read_only=True)
-    actors = ActorSerializer(many=True, read_only=True)
-    reviews = ReviewSerializer(many=True, read_only=True)       
+    genre = GenreSerializer(many=True, read_only=True, required=False)
+    actors = ActorSerializer(many=True, read_only=True, required=False)
+    reviews = ReviewSerializer(many=True, read_only=True, required=False)       
     class Meta:
         model = Movie
         fields = ('id', 'title', 'title_en', 'img_url', 'description', 'director', 'actors', 'genre', 'users', 'open_date', 'reviews')
 
 class ReviewListSerializer(serializers.ModelSerializer):
-    movie = MovieSerializer(read_only=True)
-    comments = CommentSerializer(many=True, read_only=True)
-    user = UserSerializer(read_only=True)
+    movie = MovieSerializer(read_only=True, required=False)
+    comments = CommentSerializer(many=True, read_only=True, required=False)
+    user = UserSerializer(read_only=True, required=False)
     class Meta:
         model = Review
         fields = ('id', 'title', 'content', 'rank', 'movie', 'user', 'comments')
