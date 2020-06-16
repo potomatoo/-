@@ -115,11 +115,14 @@ def detail_review_list(request, review_pk):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def create_review(request):
+def create_review(request, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)    
     serializer = ReviewSerializer(data=request.data)    
-    if serializer.is_valid():
+    if serializer.is_valid(raise_exception=True):
+        serializer.movie = movie
+        serializer.user = request.user
         serializer.save()
-    return Response(serializer.data)
+        return Response(serializer.data)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

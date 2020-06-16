@@ -71,7 +71,7 @@ export default {
     createReview() {
       const token = sessionStorage.getItem("jwt");
       const user_id = jwtDecode(token).user_id;
-      const reviewURL = "http://localhost:8000/api/v1/review/create/";
+      const reviewURL = `http://localhost:8000/api/v1/${this.movie.id}/review/create/`;
       const options = {
         headers: {
           Authorization: "JWT " + token

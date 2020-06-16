@@ -27,8 +27,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'review', 'user', 'content')
 
 class ReviewSerializer(serializers.ModelSerializer):     
-    comments = CommentSerializer(many=True, read_only=True)  
-    user = UserSerializer(read_only=True)  
+    comments = CommentSerializer(many=True, read_only=True)      
     class Meta:
         model = Review
         fields = ('id', 'title', 'content', 'rank', 'movie', 'user', 'comments')
@@ -36,7 +35,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True, read_only=True)
     actors = ActorSerializer(many=True, read_only=True)
-    reviews = ReviewSerializer(many=True, read_only=True)    
+    reviews = ReviewSerializer(many=True, read_only=True)       
     class Meta:
         model = Movie
         fields = ('id', 'title', 'title_en', 'img_url', 'description', 'director', 'actors', 'genre', 'users', 'open_date', 'reviews')
