@@ -85,11 +85,15 @@ export default {
         user: user_id
       };
       console.log(data);
-      axios.post(reviewURL, data, options).then(res => {
-        console.log(res);
-        this.$emit("reviewUpdateEvent", true);
-        
-      });
+      axios.post(reviewURL, data, options)
+        .then(res => {
+          console.log(res);
+          this.$emit("reviewUpdateEvent", true);
+        })
+        .catch(err => {
+          console.log('!')
+          console.error(err)
+        });
     }
   }
 };

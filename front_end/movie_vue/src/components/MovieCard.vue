@@ -118,7 +118,7 @@ export default {
               this.rating = review.rank;
             }
             axios
-              .get(`http://localhost:8000/api/v1/user/${review.user}/`, options)
+              .get(`http://localhost:8000/api/v1/user/${review.user.id}/`, options)
               .then(res => {
                 review.username = res.data.username;
               });
