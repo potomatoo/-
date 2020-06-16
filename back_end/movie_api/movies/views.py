@@ -55,6 +55,13 @@ def movie(request):
     movie_serializer = MovieSerializer(movies, many=True)
     return Response(movie_serializer.data)
 
+@api_view(['GET'])
+def weather_recommend(request):    
+    movies = Movie.objects.all().filter(genre=2)
+    movie_serializer = MovieSerializer(movies, many=True)
+    return Response(movie_serializer.data)
+
+
 # .../movie/pk/
 @api_view(['GET'])
 def movie_detail(request, movie_pk):
@@ -96,7 +103,7 @@ def genre_detail(request, genre_pk):
 @permission_classes([IsAuthenticated])
 def review_list(request):
     reviews = Review.objects.all()
-    serializer = ReviewSerializer(reviews, many=True)
+    serializer = ReviewListSerializer(reviews, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
@@ -188,3 +195,4 @@ def delete_comment(request, comment_pk):
         return Response('COMMENT DELETE!!')
     else:
         return Response(False)
+

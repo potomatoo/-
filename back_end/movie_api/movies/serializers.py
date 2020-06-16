@@ -40,6 +40,14 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = ('id', 'title', 'title_en', 'img_url', 'description', 'director', 'actors', 'genre', 'users', 'open_date', 'reviews')
 
+class ReviewListSerializer(serializers.ModelSerializer):
+    movie = MovieSerializer(read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
+    user = UserSerializer(read_only=True)
+    class Meta:
+        model = Review
+        fields = ('id', 'title', 'content', 'rank', 'movie', 'user', 'comments')
+
 class UserCreationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

@@ -30,4 +30,5 @@ urlpatterns = [
     path('review/<int:review_pk>/comment/<int:comment_pk>/update/', views.update_comment, name='update_comment'),
     path('review/<int:review_pk>/comment/<int:comment_pk>/delete/', views.delete_comment, name='delete_comment'),
 
+    path('weather_recommend/', views.weather_recommend, name='weather_recommend')
 ]
