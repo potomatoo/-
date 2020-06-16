@@ -169,10 +169,10 @@
                 class="text-xs-center table-link"
                 @click="showDetail(props.item)"
               >{{ props.item.title }}</td>
-              <td class="text-xs-center">{{ props.item.user.username }}</td>
+              <td class="text-xs-center">{{ props.item.user }}</td>
               <td class="justify-center">
                 <v-btn
-                  v-if="props.item.user === getMyUsername"
+                  v-if="props.item.user !== getMyUsername"
                   icon
                   class="mx-0"
                   @click="editItem(props.item)"
@@ -180,7 +180,7 @@
                   <v-icon color="teal">mdi-pencil</v-icon>
                 </v-btn>
                 <v-btn
-                  v-if="props.item.user === getMyUsername"
+                  v-if="props.item.user !== getMyUsername"
                   icon
                   class="mx-0"
                   @click="deleteItem(props.item)"
@@ -244,13 +244,7 @@ export default {
         rank: 0
       },
       editedIndex: -1,
-      editedItem: {
-        title: "",
-        content: "",
-        movie: "",
-        user: "",
-        rank: 0
-      },
+      editedItem: [],
       defaultItem: {
         title: "",
         content: "",
@@ -274,7 +268,6 @@ export default {
 			const token = sessionStorage.getItem("jwt");
       const user_id = jwtDecode(token).user_id;
       const review_id = this.reviews[this.detailIndex].id
-      const SERVER_URL = "http://localhost:8000/api/v1";
       const options = {
         headers: {
           Authorization: "JWT " + token
@@ -286,11 +279,11 @@ export default {
 				user: user_id,
 				review: review_id
       };
-			axios.post(`${SERVER_URL}/review/${review_id}/comment/create/`, data, options)
+			axios.post(`${SERVER_URL}/api/v1/review/${review_id}/comment/create/`, data, options)
 			.then(res => {
         console.log(res.data)
         this.commentContent = ''
-        axios.get(`${SERVER_URL}/review/${review_id}/comment`, options)
+        axios.get(`${SERVER_URL}/api/v1/review/${review_id}/comment`, options)
           .then( res => {
             console.log(res.data)
             this.detailItem.comments = res.data
@@ -305,7 +298,6 @@ export default {
       this.detailIndex = this.reviews.indexOf(item);
       this.detailItem = Object.assign({}, item);
       const token = sessionStorage.getItem("jwt");
-			// const review_id = this.reviews[this.detailIndex].id
       const options = {
 				headers: {
           Authorization: "JWT " + token
@@ -323,51 +315,49 @@ export default {
       this.detail_dialog = true;
     },
 
-    changeIdToName() {
-      if (this.updateCnt === 0) {
-        const token = sessionStorage.getItem("jwt");
-        const options = {
-          headers: {
-            Authorization: "JWT " + token
-          }
-        };
-        this.reviews.forEach((review, index) => {
-          axios
-            .get(`${SERVER_URL}/api/v1/movie/${review.movie}`, options)
-            .then(res => {
-              this.reviews[index].movie = res.data.title;
-              this.review.title_name = res.data.title;
-            })
-            .catch(error => {
-              console.log(error.response);
-            });
-        });
+    // changeIdToName() {
+    //   if (this.updateCnt === 0) {
+    //     const token = sessionStorage.getItem("jwt");
+    //     const options = {
+    //       headers: {
+    //         Authorization: "JWT " + token
+    //       }
+    //     };
+    //     this.reviews.forEach((review, index) => {
+    //       axios
+    //         .get(`${SERVER_URL}/api/v1/movie/${review.movie}`, options)
+    //         .then(res => {
+    //           this.reviews[index].movie = res.data.title;
+    //           this.review.title_name = res.data.title;
+    //         })
+    //         .catch(error => {
+    //           console.log(error.response);
+    //         });
+    //     });
 
-        this.reviews.forEach((review, index) => {
-          axios
-            .get(`${SERVER_URL}/api/v1/user/${review.user}`, options)
-            .then(res => {
-              this.reviews[index].user = res.data.username;
-            })
-            .catch(error => {
-              console.log(error.response);
-            });
-        });
-        this.updateCnt++;
-      }
-    },
+    //     this.reviews.forEach((review, index) => {
+    //       axios
+    //         .get(`${SERVER_URL}/api/v1/user/${review.user}`, options)
+    //         .then(res => {
+    //           this.reviews[index].user = res.data.username;
+    //         })
+    //         .catch(error => {
+    //           console.log(error.response);
+    //         });
+    //     });
+    //     this.updateCnt++;
+    //   }
+    // },
 
     editItem(item) {
       this.editedIndex = this.reviews.indexOf(item);
       this.editedItem = Object.assign({}, item);
       const token = sessionStorage.getItem("jwt");
-      const user_id = jwtDecode(token).user_id;
       const options = {
         headers: {
           Authorization: "JWT " + token
         }
       };
-      this.editedItem.user = user_id;
 
       axios
         .get(
@@ -376,7 +366,7 @@ export default {
         )
         .then(res => {
           console.log(res.data.movie);
-          this.editedItem.movie = res.data.movie;
+          this.editedItem = res.data;
         })
         .catch(error => {
           console.log(error.response);
@@ -433,14 +423,13 @@ export default {
         };
         axios
           .post(
-            `${SERVER_URL}/api/v1/review/${
-              this.reviews[this.editedIndex].id
-            }/update/`,
+            `${SERVER_URL}/api/v1/${this.editedItem.movie}/review/${this.editedItem.id}/update/`, 
             this.editedItem,
             options
           )
           .then(res => {
-            console.log(res);
+            console.log(res.data)
+            console.log('!!');
           })
           .catch(error => {
             console.log(error.response);
@@ -448,7 +437,7 @@ export default {
       } else {
         const token = sessionStorage.getItem("jwt");
         const user_id = jwtDecode(token).user_id;
-        const reviewURL = "http://localhost:8000/api/v1/review/create/";
+        const reviewURL =  `${SERVER_URL}/api/v1/${this.select.movie_id}/review/create/`;
         const options = {
           headers: {
             Authorization: "JWT " + token
@@ -471,12 +460,11 @@ export default {
           });
       }
       this.close();
-      location.reload(true);
+      // location.reload(true);
     },
 
     getMovies() {
       const token = sessionStorage.getItem("jwt");
-      const SERVER_URL = "http://localhost:8000";
       const options = {
         headers: {
           Authorization: "JWT " + token
@@ -506,7 +494,7 @@ export default {
     this.getMovies();
   },
   updated() {
-    this.changeIdToName();
+    // this.changeIdToName();
   },
 
   watch: {
