@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.db.models import Q
 from rest_framework.permissions import AllowAny # 회원가입은 인증 X
 
 from .models import *
@@ -56,11 +57,21 @@ def movie(request):
     return Response(movie_serializer.data)
 
 @api_view(['GET'])
-def weather_recommend(request):    
-    movies = Movie.objects.all().filter(genre=2)
+def weather_recommend(request):  
+    if request.data['is_rain'] == 'true':
+        movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 6) | Q(genre = 8) | Q(genre = 8))
+    else:
+        if request.data['weather'] == '맑음':
+            movies = Movie.objects.filter(Q(genre = 10) | Q(genre = 14) | Q(genre = 15))       
+            
+        elif request.data['weather'] == '구름많음':
+            movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 4))
+
+        elif request.data['weather'] == '흐림':
+            movies = Movie.objects.filter(Q(genre = 4) | Q(genre = 5) | Q(genre = 9))
+
     movie_serializer = MovieSerializer(movies, many=True)
     return Response(movie_serializer.data)
-
 
 # .../movie/pk/
 @api_view(['GET'])
@@ -157,7 +168,7 @@ def delete_review(request, review_pk):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def comment_list(request, review_pk):
-    comments = Comment.objects.filter(review=review_pk)
+    comments = Comment.objects.filter(review=review_pk)    
     serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data)
 
@@ -170,7 +181,7 @@ def create_comment(request, review_pk):
         serializer.review = review
         serializer.user = request.user
         serializer.save()
-        return Response(serializer.data)
+    return Response(request.data)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
