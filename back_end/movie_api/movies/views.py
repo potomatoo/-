@@ -64,7 +64,7 @@ def weather_recommend(request):
     ServiceKey = '7r002FWJrOZmqbjLfrDYopN40a1SRIbj9FycuHMeYBjc89qpG%2BMxPpH8HsJGui2edG23nhfPz9OVUWQRqW0QyA%3D%3D'
     request = json.loads(request.body)
     code = request['location_code']
-    print(code)
+    
     url = f'http://apis.data.go.kr/1360000/VilageFcstMsgService/getLandFcst?serviceKey={ServiceKey}&pageNo=1&numOfRows=10&dataType=JSON&regId={code}&'
     request = urllib.request.Request(url)
     response = urllib.request.urlopen(request)
@@ -75,23 +75,28 @@ def weather_recommend(request):
         dict = json.loads(response_body.decode('utf-8'))        
     else:
         print("Error Code:" + rescode)
-    is_rain = dict['response']['body']['items']['item'][1]['wf']
-    weather_status = dict['response']['body']['items']['item'][1]['rnYn']
+    # is_rain = dict['response']['body']['items']['item'][1]['wf']
+    # weather_status = dict['response']['body']['items']['item'][1]['rnYn']
+    is_rain = 0
+    weather_status = '흐림'
     
-
     if is_rain != 0:
-        movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 6) | Q(genre = 8) | Q(genre = 8))
+        movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 6) | Q(genre = 8)).distinct()
+        sample = movies.random(5)
     else:
         if weather_status == '맑음':
-            movies = Movie.objects.filter(Q(genre = 10) | Q(genre = 14) | Q(genre = 15))       
-            
+            movies = Movie.objects.filter(Q(genre = 15) | Q(genre = 10) | Q(genre = 14)).distinct()           
+            sample = movies.random(5)
+
         elif weather_status == '구름많음':
-            movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 4))
+            movies = Movie.objects.filter(Q(genre = 2) | Q(genre = 11) | Q(genre = 12) | Q(genre = 7)).distinct()            
+            sample = movies.random(5)
 
         elif weather_status == '흐림':
-            movies = Movie.objects.filter(Q(genre = 4) | Q(genre = 5) | Q(genre = 9))
-
-    movie_serializer = MovieSerializer(movies, many=True)
+            movies = Movie.objects.filter(Q(genre = 4) | Q(genre = 5) | Q(genre = 9) | Q(genre = 13)).distinct()            
+            sample = movies.random(5)
+    
+    movie_serializer = MovieSerializer(sample, many=True)
     return Response(movie_serializer.data)
 
 
