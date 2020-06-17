@@ -92,13 +92,7 @@ def weather_recommend(request):
     else:
         print("Error Code:" + rescode)
     is_rain = dict['response']['body']['items']['item'][1]['wf']
-<<<<<<< HEAD
-    weather_status = dict['response']['body']['items']['item'][1]['rnYn']
-    # is_rain = 0
-    # weather_status = '흐림'
-=======
     weather_status = dict['response']['body']['items']['item'][1]['rnYn']    
->>>>>>> 609a8eefa3c78b95e5345982751a564bd38c7d18
     
     if is_rain != 0:
         movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 6) | Q(genre = 8)).distinct()
