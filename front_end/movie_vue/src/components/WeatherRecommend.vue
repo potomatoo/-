@@ -69,7 +69,8 @@ export default {
       axios
         .post(`${SERVER_URL}/api/v1/weather_recommend/`, data, options)
         .then(res => {
-					this.weatherMovieList = res.data
+          this.weatherMovieList = res.data
+          console.log('이게', this.weatherMovieList)
           console.log(res);
         });
     }
