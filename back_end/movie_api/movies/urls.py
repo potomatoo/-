@@ -29,5 +29,7 @@ urlpatterns = [
     path('review/<int:review_pk>/comment/create/', views.create_comment, name='create_comment'),
     path('comment/<int:comment_pk>/delete/', views.delete_comment, name='delete_comment'),
 
-    path('weather_recommend/', views.weather_recommend, name='weather_recommend')
+    path('weather_recommend/', views.weather_recommend, name='weather_recommend'),
+    path('actor_recommend/', views.actor_recommend, name="actor_recommend"),
+    path('<int:user_pk>/like_genre/', views.like_genre, name='like_genre'),
 ]

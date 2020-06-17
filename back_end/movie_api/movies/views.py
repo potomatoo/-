@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.db.models import Q
+from django.db.models import Q, Value
 from rest_framework.permissions import AllowAny # 회원가입은 인증 X
 
 from .models import *
@@ -12,9 +12,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
+import random
 import urllib
 import json
-import random
 
 # .../user/
 @api_view(['POST'])
@@ -60,20 +60,6 @@ def movie(request):
     movie_serializer = MovieSerializer(movies, many=True)
     return Response(movie_serializer.data)
 
-def random_sampling(movies):
-    sample = []
-    random_movie = []
-
-    while len(random_movie) != 5:
-        new_number = random.randint(0, len(movies)-1)
-        if new_number not in random_movie:
-            random_movie.append(new_number)
-
-    for index in random_movie:
-        sample.append(movies[index])
-
-    return sample
-
 @api_view(['GET', 'POST'])
 def weather_recommend(request):   
     ServiceKey = '7r002FWJrOZmqbjLfrDYopN40a1SRIbj9FycuHMeYBjc89qpG%2BMxPpH8HsJGui2edG23nhfPz9OVUWQRqW0QyA%3D%3D'
@@ -91,27 +77,61 @@ def weather_recommend(request):
     else:
         print("Error Code:" + rescode)
     is_rain = dict['response']['body']['items']['item'][1]['wf']
-    weather_status = dict['response']['body']['items']['item'][1]['rnYn']    
+    weather_status = dict['response']['body']['items']['item'][1]['rnYn']
+    # is_rain = 0
+    # weather_status = '흐림'
     
     if is_rain != 0:
         movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 6) | Q(genre = 8)).distinct()
-        sample = random_sampling(movies)
+        sample = movies.random(5)
     else:
         if weather_status == '맑음':
             movies = Movie.objects.filter(Q(genre = 15) | Q(genre = 10) | Q(genre = 14)).distinct()           
-            sample = random_sampling(movies)
+            sample = movies.random(5)
 
         elif weather_status == '구름많음':
             movies = Movie.objects.filter(Q(genre = 2) | Q(genre = 11) | Q(genre = 12) | Q(genre = 7)).distinct()            
-            sample = random_sampling(movies)
+            sample = movies.random(5)
 
         elif weather_status == '흐림':
-            movies = Movie.objects.filter(Q(genre = 4) | Q(genre = 5) | Q(genre = 9) | Q(genre = 13)).distinct()                        
-            sample = random_sampling(movies)
-
-    movie_serializer = MovieSerializer(sample, many=True, required=False)
+            movies = Movie.objects.filter(Q(genre = 4) | Q(genre = 5) | Q(genre = 9) | Q(genre = 13)).distinct()            
+            sample = movies.random(5)
+    
+    movie_serializer = MovieSerializer(sample, many=True)
     return Response(movie_serializer.data)
 
+@api_view(['GET'])
+def like_genre(request, user_pk):
+    over_4_reviews = Review.objects.filter(Q(user=request.user) & Q(rank__gte = 4))
+    
+    like_genre = [0 for _ in range(16)]
+    for recommend in over_4_reviews:
+        
+        movies = Movie.objects.get(id=recommend.movie_id).genre.values()
+        for movie in movies:
+            like_genre[movie['id']] += 1
+    
+    recommend_genre = like_genre.index(max(like_genre))
+    result_movies = Movie.objects.filter(genre=recommend_genre)
+
+    movie_serializer = MovieSerializer(result_movies, many=True)
+    return Response(movie_serializer.data)
+
+@api_view(['GET'])
+def worldcup_recommend(request):
+    actors = Actor.objects.filter(~Q(img_url = 'https://image.flaticon.com/icons/svg/1077/1077114.svg'))
+    random_actors = random.sample(list(actors), 32)
+    worldcup = Worldcup()
+    worldcup.save()
+    worldcup.actors.set(random_actors)
+    worldcup_serializer = WorldcupSerializer(worldcup)
+    return Response(worldcup_serializer.data)
+
+@api_view(['GET'])
+def actor_recommend(request):
+    movies = Movie.objects.filter(actor=request.data['actor'])
+    movie_serializer = MovieSerializer(movies, required=False)
+    return Response(movie_serializer)
 
 # .../movie/pk/
 @api_view(['GET'])
@@ -189,7 +209,7 @@ def update_review(request, movie_pk, review_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)    
     review = get_object_or_404(Review, pk=review_pk)   
     serializer = ReviewSerializer(instance=review, data=request.data)    
-    if serializer.is_valid(raise_exception=True):
+    if serializer.is_valid() and request.user == review.user:
         serializer.movie = movie
         serializer.save()
         return Response(serializer.data)
@@ -234,4 +254,3 @@ def delete_comment(request, comment_pk):
         return Response('COMMENT DELETE!!')
     else:
         return Response(False)
-

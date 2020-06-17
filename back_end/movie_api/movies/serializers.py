@@ -6,11 +6,6 @@ from .models import *
 # from django.contrib.auth.models import User
 User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):        
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'is_staff')
-
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
@@ -20,6 +15,12 @@ class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actor
         fields = ('id', 'name')
+
+class UserSerializer(serializers.ModelSerializer):
+    like_genres = GenreSerializer(many=True, read_only=True, required=False)        
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'is_staff', 'like_genres')
 
 class CommentSerializer(serializers.ModelSerializer):          
     class Meta:
@@ -35,10 +36,11 @@ class ReviewSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True, read_only=True, required=False)
     actors = ActorSerializer(many=True, read_only=True, required=False)
-    reviews = ReviewSerializer(many=True, read_only=True, required=False)       
+    reviews = ReviewSerializer(many=True, read_only=True, required=False)
+    like_users = UserSerializer(many=True, read_only=True, required=False)           
     class Meta:
         model = Movie
-        fields = ('id', 'title', 'title_en', 'img_url', 'description', 'director', 'actors', 'genre', 'users', 'open_date', 'reviews')
+        fields = ('id', 'title', 'title_en', 'img_url', 'description', 'director', 'actors', 'genre', 'like_users', 'open_date', 'reviews')
 
 class ReviewListSerializer(serializers.ModelSerializer):
     movie = MovieSerializer(read_only=True, required=False)
