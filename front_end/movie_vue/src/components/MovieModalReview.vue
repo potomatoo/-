@@ -91,7 +91,6 @@ export default {
           this.$emit("reviewUpdateEvent", true);
         })
         .catch(err => {
-          console.log('!')
           console.error(err)
         });
     }

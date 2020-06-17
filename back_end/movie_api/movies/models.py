@@ -53,4 +53,7 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class Worldcup(models.Model):
+    actors = models.ManyToManyField(Actor, related_name='worldcups', blank=True)
+
     

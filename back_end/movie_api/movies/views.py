@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
+import random
 import urllib
 import json
 
@@ -75,10 +76,10 @@ def weather_recommend(request):
         dict = json.loads(response_body.decode('utf-8'))        
     else:
         print("Error Code:" + rescode)
-    # is_rain = dict['response']['body']['items']['item'][1]['wf']
-    # weather_status = dict['response']['body']['items']['item'][1]['rnYn']
-    is_rain = 0
-    weather_status = '흐림'
+    is_rain = dict['response']['body']['items']['item'][1]['wf']
+    weather_status = dict['response']['body']['items']['item'][1]['rnYn']
+    # is_rain = 0
+    # weather_status = '흐림'
     
     if is_rain != 0:
         movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 6) | Q(genre = 8)).distinct()
@@ -99,6 +100,16 @@ def weather_recommend(request):
     movie_serializer = MovieSerializer(sample, many=True)
     return Response(movie_serializer.data)
 
+ # .../worldcup/
+@api_view(['GET'])
+def worldcup_recommend(request):
+    actors = Actor.objects.filter(~Q(img_url = 'https://image.flaticon.com/icons/svg/1077/1077114.svg'))
+    random_actors = random.sample(list(actors), 32)
+    worldcup = Worldcup()
+    worldcup.save()
+    worldcup.actors.set(random_actors)
+    worldcup_serializer = WorldcupSerializer(worldcup)
+    return Response(worldcup_serializer.data)
 
 # .../movie/pk/
 @api_view(['GET'])
@@ -140,7 +151,7 @@ def genre_detail(request, genre_pk):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def review_list(request):
-    reviews = Review.objects.all()
+    reviews = Review.objects.all().order_by('-id')
     serializer = ReviewListSerializer(reviews, many=True)
     return Response(serializer.data)
 

@@ -24,7 +24,7 @@
 
         <v-list-item link to="/community">
           <v-list-item-action>
-            <v-icon>mdi-movie-open</v-icon>
+            <v-icon>mdi-comment-text-multiple</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Community</v-list-item-title>
@@ -33,10 +33,10 @@
 
         <v-list-item link to="/profile">
           <v-list-item-action>
-            <v-icon>mdi-account</v-icon>
+            <v-icon>mdi-movie-open</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Profile</v-list-item-title>
+            <v-list-item-title>Recommend</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item @click.prevent="logout">
@@ -51,7 +51,7 @@
 
       <v-list-item dense v-if="isLoggedIn && username == 'admin'" link to="/AdminPosition">
         <v-list-item-action>
-          <v-icon>mdi-movie-open</v-icon>
+          <v-icon>mdi-cog</v-icon>
         </v-list-item-action>
         <v-list-item-content>
           <v-list-item-title>Staff</v-list-item-title>
@@ -104,9 +104,7 @@ export default {
   props: {
 
   },
-  // data: () => ({
-  //   drawer: null,
-  // }),
+  
   data() {
     return {
       drawer: null,

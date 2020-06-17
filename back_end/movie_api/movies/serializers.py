@@ -19,7 +19,7 @@ class GenreSerializer(serializers.ModelSerializer):
 class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actor
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'img_url')
 
 class CommentSerializer(serializers.ModelSerializer):          
     class Meta:
@@ -53,3 +53,7 @@ class UserCreationSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'password',)
 
+class WorldcupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Worldcup
+        fields = ('id', 'actors')
