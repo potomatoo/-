@@ -16,11 +16,10 @@ class ActorSerializer(serializers.ModelSerializer):
         model = Actor
         fields = ('id', 'name', 'img_url')
 
-class UserSerializer(serializers.ModelSerializer):
-    like_genres = GenreSerializer(many=True, read_only=True, required=False)        
+class UserSerializer(serializers.ModelSerializer):    
     class Meta:
         model = User
-        fields = ('id', 'username', 'is_staff', 'like_genres')
+        fields = ('id', 'username', 'is_staff')
 
 class CommentSerializer(serializers.ModelSerializer):          
     class Meta:
