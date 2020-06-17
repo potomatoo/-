@@ -116,11 +116,6 @@ export default {
             if (review.user === user_id) {
               this.rating = review.rank;
             }
-            axios
-              .get(`http://localhost:8000/api/v1/user/${review.user}/`, options)
-              .then(res => {
-                review.username = res.data.username;
-              });
           });
         });
     } // end of ratingCheck()

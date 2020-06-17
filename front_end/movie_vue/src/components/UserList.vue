@@ -1,15 +1,20 @@
 <template>
-  <v-container fluid>
+  <v-card>
     <h1 class="pt-3 d-flex justify-content-center">사용자 권한 수정</h1>
-    <v-flex v-for="user in this.users" :key="user.id" xs6>
-      <v-checkbox
-        light
-        v-model="user.is_staff"
-        :label="`${user.username}: ${user.is_staff.toString()}`"
-      ></v-checkbox>
-    </v-flex>
-    <v-btn color="secondary" class="small" @click="save()">변경사항 저장</v-btn>
-  </v-container>
+    <v-container fluid>
+      <v-row v-for="user in this.users" :key="user.id">
+        <v-col cols="12" sm="4" md="4">
+          <v-checkbox
+            v-model="user.is_staff"
+            :label="`${user.username}: ${user.is_staff.toString()}`"
+            color="red"
+            hide-details
+          ></v-checkbox>
+        </v-col>
+      </v-row>
+      <v-btn color="secondary" class="small" @click="save()">변경사항 저장</v-btn>
+    </v-container>
+  </v-card>
 </template>
 
 <script>
@@ -50,18 +55,18 @@ export default {
         headers: {
           Authorization: "JWT " + token
         }
-			};
-			this.users.forEach(user => {
-				const data = {
-					id: user.id,
-					username: user.username,
-					is_staff: user.is_staff
-				}
-				axios.post(`${SERVER_URL}/api/v1/${user.id}/userupdate/`, data, options)
-					.then(res => {
-						console.log(res.data)
-					})
-			})
+      };
+      this.users.forEach(user => {
+        const data = {
+          username: user.username,
+          is_staff: user.is_staff
+        };
+        axios
+          .post(`${SERVER_URL}/api/v1/${user.id}/user_update/`, data, options)
+          .then(res => {
+            console.log(res.data);
+          });
+      });
     }
   },
   created() {

@@ -45,7 +45,7 @@ def signup(request):
 @api_view(['POST'])
 def user_update(request, user_pk):    
     user = get_object_or_404(User, pk=user_pk)   
-    serializer = UserSerializer(data=request.data)    
+    serializer = UserSerializer(user, data=request.data)    
     if serializer.is_valid(raise_exception=True):
         serializer.save()
         return Response(serializer.data)
@@ -229,7 +229,7 @@ def update_review(request, movie_pk, review_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)    
     review = get_object_or_404(Review, pk=review_pk)   
     serializer = ReviewSerializer(instance=review, data=request.data)    
-    if serializer.is_valid() and request.user == review.user:
+    if serializer.is_valid():
         serializer.movie = movie
         serializer.save()
         return Response(serializer.data)
@@ -240,11 +240,8 @@ def update_review(request, movie_pk, review_pk):
 @permission_classes([IsAuthenticated])
 def delete_review(request, review_pk):    
     review = get_object_or_404(Review, pk=review_pk)
-    if request.user == review.user:
-        review.delete()
-        return Response('REVIEW DELETE!!')
-    else:
-        return Response(False)
+    review.delete()
+    return Response('REVIEW DELETE!!')
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -268,9 +265,6 @@ def create_comment(request, review_pk):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_comment(request, comment_pk):    
-    comment = get_object_or_404(Comment, pk=comment_pk)
-    if request.user == comment.user:        
-        comment.delete()
-        return Response('COMMENT DELETE!!')
-    else:
-        return Response(False)
+    comment = get_object_or_404(Comment, pk=comment_pk)   
+    comment.delete()
+    return Response('COMMENT DELETE!!')
