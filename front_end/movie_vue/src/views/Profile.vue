@@ -3,11 +3,15 @@
     
     <v-container>
       <h2>{{ username }}님의 추천 영화</h2>
-      <v-row
-        justify="center"
-      >
+      <v-row>
+        <hr style="color: black; width: 100%" >
+        <h3 class="d-flex justify-content-start ml-4 mt-5">선호하는 장르의 영화입니다.</h3>
+        <GenreRecommend class="d-flex justify-content-center"></GenreRecommend>
+        <hr style="color: black; width: 100%" >
+        <h3 class="d-flex justify-content-start ml-4 mt-5">현재 날씨와 어울리는 영화입니다.</h3>
         <WeatherRecommend></WeatherRecommend>
         <hr style="color: black; width: 100%" >
+        <h3 class="d-flex justify-content-start ml-4 mt-5">나만의 배우가 출연한 영화입니다.</h3>
         <WorldcupRecommend></WorldcupRecommend>
       </v-row>
     </v-container>
@@ -17,16 +21,12 @@
 </template>
 
 <script>
-// import Timeline from '../components/Timeline'
-// import ReviewList from '../components/ReviewList'
 import WeatherRecommend from '../components/WeatherRecommend'
 import WorldcupRecommend from '../components/WorldcupRecommend'
-// import jwtDecode from 'jwt-decode'
+import GenreRecommend from '../components/GenreRecommend'
 import { mapGetters } from 'vuex';
 import router from '../router';
-// import axios from 'axios'
 
-// const SERVER_URL = 'http://localhost:8000'
 export default {
   name: "profile",
   
@@ -43,7 +43,7 @@ export default {
   components: {
     WeatherRecommend,
     WorldcupRecommend,
-    // ReviewList,
+    GenreRecommend
   },
   methods: {
     getInfo() {

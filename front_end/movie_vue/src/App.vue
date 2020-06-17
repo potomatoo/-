@@ -104,7 +104,7 @@ export default {
   props: {
 
   },
-  
+
   data() {
     return {
       drawer: null,

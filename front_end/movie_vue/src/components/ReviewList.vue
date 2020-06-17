@@ -23,9 +23,9 @@
             </v-card-title>
 
             <v-container fluid>
-              <div class="text-center py-3">
+              <!-- <div class="text-center py-3">
                 <h1>{{editedItem.movie}}</h1>
-              </div>
+              </div> -->
 
               <div class="text-center">
                 <v-rating
@@ -128,7 +128,7 @@
                         <span class="pr-3">{{comment.content}}</span>
                         <span class="font-italic text--secondary small"> - {{comment.user.username}}</span>
                         <v-btn
-                          v-if="comment.user === getMyUserId"
+                          v-if="comment.user === getMyUserId  || getMyUsername === 'admin' || is_staff"
                           text
                           small
                           @click="deleteComment(comment.id)"
@@ -164,7 +164,7 @@
               <td class="text-xs-center">{{ props.item.user.username }}</td>
               <td class="justify-center">
                 <v-btn
-                  v-if="props.item.user.username === getMyUsername"
+                  v-if="props.item.user.username === getMyUsername || getMyUsername === 'admin' || is_staff"
                   icon
                   class="mx-0"
                   @click="editItem(props.item)"
@@ -172,7 +172,7 @@
                   <v-icon color="teal">mdi-pencil</v-icon>
                 </v-btn>
                 <v-btn
-                  v-if="props.item.user.username === getMyUsername"
+                  v-if="props.item.user.username === getMyUsername  || getMyUsername === 'admin' || is_staff"
                   icon
                   class="mx-0"
                   @click="deleteItem(props.item)"
@@ -212,6 +212,8 @@ export default {
 
   data() {
     return {
+      username:'',
+      is_staff:'',
       updateCnt: 0,
       dialog: false,
       detail_dialog: false,
@@ -361,8 +363,7 @@ export default {
 
     deleteItem(item) {
       const index = this.reviews.indexOf(item);
-      confirm("Are you sure you want to delete this review?") &&
-        this.reviews.splice(index, 0);
+      
 
       const token = sessionStorage.getItem("jwt");
       const options = {
@@ -370,19 +371,22 @@ export default {
           Authorization: "JWT " + token
         }
       };
-      axios
-        .delete(
-          `${SERVER_URL}/api/v1/review/${this.reviews[index].id}/delete/`,
-          options
-        )
-        .then(res => {
-          console.log(res);
-          location.reload(true);
-        })
-        .catch(error => {
-          alert("자신의 글만 삭제할 수 있습니다.");
-          console.log(error.response);
-        });
+      if(confirm("Are you sure you want to delete this review?")) {
+
+        axios
+          .delete(
+            `${SERVER_URL}/api/v1/review/${this.reviews[index].id}/delete/`,
+            options
+          )
+          .then(res => {
+            console.log(res);
+            location.reload(true);
+          })
+          .catch(error => {
+            alert("자신의 글만 삭제할 수 있습니다.");
+            console.log(error.response);
+          });
+      }
     },
 
     close() {
@@ -457,6 +461,26 @@ export default {
           this.movies.push({ movie_id: movie.id, movie_name: movie.title });
         });
       });
+    },
+
+    getUserinfo() {
+      const token = sessionStorage.getItem("jwt");
+      const user_id = jwtDecode(token).user_id;
+      console.log(user_id)
+      const options = {
+        headers: {
+          Authorization: "JWT " + token
+        }
+      };
+      axios
+        .get(`${SERVER_URL}/api/v1/userList/`, options)
+        .then(res => {
+          console.log(res.data[user_id - 1])
+          this.is_staff = res.data[user_id - 1].is_staff
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
   },
   
@@ -485,6 +509,7 @@ export default {
 
   created() {
     this.getMovies();
+    this.getUserinfo();
   },
 
   watch: {

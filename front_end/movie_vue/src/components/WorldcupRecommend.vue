@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-layout v-if="!finishFlag" row class="d-flex align-items-center">
       <v-flex class="d-flex flex-column align-items-center justify-content-around">
-        <h5 class="m-0 pb-3">더 좋아하는 배우를 선택해 주세요</h5>
+        <h5 class="m-0 pb-3">나만의 배우를 선택해 주세요</h5>
         <v-btn v-if="!left" color="secondary" class="small" @click="next">{{buttonName}}</v-btn>
       </v-flex>
     </v-layout>
@@ -22,18 +22,17 @@
 
     <v-layout row wrap class="d-flex justify-content-center text-center">
       <div v-if="finishFlag">
-        <h1>{{favorite_actor.name}} 우승!</h1>
         <h3>배우 '{{favorite_actor.name}}'이(가) 출연한 영화들입니다.</h3>
       </div>
 
-      <v-container fluid class="d-flex" style="overflow:auto">
+      <v-container fluid class="d-flex justify-content-center" style="overflow:auto">
         <v-flex
           v-for="movie in this.favoriteActorMovieList"
           :key="movie.id"
           class="justify-content-center"
-          style="min-width: 200px;"
+          style="min-width: 200px; max-width: 200px"
         >
-          <MovieCard class="mx-3" :movie="movie" />
+            <MovieCard class="mx-3" :movie="movie" />
         </v-flex>
       </v-container>
     </v-layout>
@@ -101,12 +100,14 @@ export default {
       this.left = this.current_round.pop();
       this.right = this.current_round.pop();
     }
-	},
-	computed: {
-		buttonName() {
-      return this.left === null ? "이상형 월드컵 시작하기" : `${this.current_round.length}강 시작하기`;
-		}
-	},
+  },
+  computed: {
+    buttonName() {
+      return this.left === null
+        ? "이상형 월드컵 시작하기"
+        : `${this.current_round.length}강 시작하기`;
+    }
+  },
   watch: {
     //라운드 종료 판별
     left: function() {
@@ -151,7 +152,7 @@ export default {
     }
   },
   created() {
-		this.randomActorCall();
+    this.randomActorCall();
   }
 };
 </script>
