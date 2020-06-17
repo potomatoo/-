@@ -14,7 +14,7 @@ class GenreSerializer(serializers.ModelSerializer):
 class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actor
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'img_url')
 
 class UserSerializer(serializers.ModelSerializer):
     like_genres = GenreSerializer(many=True, read_only=True, required=False)        
@@ -55,3 +55,7 @@ class UserCreationSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'password',)
 
+class WorldcupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Worldcup
+        fields = ('id', 'actors')

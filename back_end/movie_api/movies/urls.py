@@ -30,6 +30,10 @@ urlpatterns = [
     path('comment/<int:comment_pk>/delete/', views.delete_comment, name='delete_comment'),
 
     path('weather_recommend/', views.weather_recommend, name='weather_recommend'),
+<<<<<<< HEAD
     path('actor_recommend/', views.actor_recommend, name="actor_recommend"),
     path('<int:user_pk>/like_genre/', views.like_genre, name='like_genre'),
+=======
+    path('worldcup_recommend/', views.worldcup_recommend, name='worldcup_recommend'),
+>>>>>>> 6b4eb59bf0c243f6cb61956204d9a96bf9f78360
 ]

@@ -412,7 +412,6 @@ export default {
           )
           .then(res => {
             console.log(res.data)
-            console.log('!!');
           })
           .catch(error => {
             console.log(error.response);

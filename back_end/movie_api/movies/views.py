@@ -77,9 +77,19 @@ def weather_recommend(request):
     else:
         print("Error Code:" + rescode)
     is_rain = dict['response']['body']['items']['item'][1]['wf']
+<<<<<<< HEAD
     weather_status = dict['response']['body']['items']['item'][1]['rnYn']
     # is_rain = 0
     # weather_status = '흐림'
+=======
+<<<<<<< HEAD
+    weather_status = dict['response']['body']['items']['item'][1]['rnYn']
+    # is_rain = 0
+    # weather_status = '흐림'
+=======
+    weather_status = dict['response']['body']['items']['item'][1]['rnYn']    
+>>>>>>> 609a8eefa3c78b95e5345982751a564bd38c7d18
+>>>>>>> 6b4eb59bf0c243f6cb61956204d9a96bf9f78360
     
     if is_rain != 0:
         movies = Movie.objects.filter(Q(genre = 3) | Q(genre = 6) | Q(genre = 8)).distinct()
@@ -117,6 +127,10 @@ def like_genre(request, user_pk):
     movie_serializer = MovieSerializer(result_movies, many=True)
     return Response(movie_serializer.data)
 
+<<<<<<< HEAD
+=======
+ # .../worldcup/
+>>>>>>> 6b4eb59bf0c243f6cb61956204d9a96bf9f78360
 @api_view(['GET'])
 def worldcup_recommend(request):
     actors = Actor.objects.filter(~Q(img_url = 'https://image.flaticon.com/icons/svg/1077/1077114.svg'))
@@ -126,12 +140,15 @@ def worldcup_recommend(request):
     worldcup.actors.set(random_actors)
     worldcup_serializer = WorldcupSerializer(worldcup)
     return Response(worldcup_serializer.data)
+<<<<<<< HEAD
 
 @api_view(['GET'])
 def actor_recommend(request):
     movies = Movie.objects.filter(actor=request.data['actor'])
     movie_serializer = MovieSerializer(movies, required=False)
     return Response(movie_serializer)
+=======
+>>>>>>> 6b4eb59bf0c243f6cb61956204d9a96bf9f78360
 
 # .../movie/pk/
 @api_view(['GET'])
@@ -173,7 +190,7 @@ def genre_detail(request, genre_pk):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def review_list(request):
-    reviews = Review.objects.all()
+    reviews = Review.objects.all().order_by('-id')
     serializer = ReviewListSerializer(reviews, many=True)
     return Response(serializer.data)
 

@@ -49,4 +49,11 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+<<<<<<< HEAD
         
+=======
+class Worldcup(models.Model):
+    actors = models.ManyToManyField(Actor, related_name='worldcups', blank=True)
+
+    
+>>>>>>> 6b4eb59bf0c243f6cb61956204d9a96bf9f78360

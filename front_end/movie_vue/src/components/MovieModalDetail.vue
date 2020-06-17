@@ -82,9 +82,6 @@ export default {
       this.$emit("closeEvent", true);
       $('iframe#myVideo').attr('src',''); 
       $('iframe#myVideo').attr('src',this.iframeSrc);
-      // this.iframeSrc = ''
-      // this.iframeSrc = this.tempSrc
-      // location.reload(true);
     },
 
     getTrailer() {

@@ -1,10 +1,10 @@
 <template>
   <v-container fluid>
-    <v-layout row wrap class="d-flex align-items-center">
-      <v-flex xs3 class="d-flex justify-content-end pr-5">
-        <v-subheader>현재 위치</v-subheader>
+    <v-layout row  wrap class="d-flex justify-content-between align-items-center">
+      <v-flex xs3 class="d-flex justify-content-center">
+        <h5 class="m-0">현재 위치</h5>
       </v-flex>
-      <v-flex xs6>
+      <v-flex xs3>
         <v-select
           :items="items"
           v-model="select"
@@ -17,7 +17,7 @@
         ></v-select>
       </v-flex>
       <v-flex xs3 class="d-flex justify-content-center">
-        <v-btn class="ma-2" color="secondary" @click="getWeatherMovieList()">날씨기반 추천받기</v-btn>
+        <v-btn class="m-2" color="secondary" @click="getWeatherMovieList()">추천받기</v-btn>
       </v-flex>
     </v-layout>
 
