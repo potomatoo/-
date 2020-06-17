@@ -5,7 +5,7 @@ app_name = "movies"
 
 urlpatterns = [
     path('user/', views.signup, name='signup'),
-    path('user/<int:user_pk>/', views.user_info, name='user_info'),
+    path('<int:user_pk>/user_update/', views.user_update, name='user_update'),
     path('userList/', views.userlist, name='userlist'),
     path('is_staff/<int:user_pk>/', views.is_staff, name='is_staff'),
     path('my_movies/', views.my_movies, name='my_movies'),
