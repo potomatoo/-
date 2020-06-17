@@ -135,7 +135,7 @@ export default {
       const token = sessionStorage.getItem("jwt");
       const SERVER_URL = "http://localhost:8000";
       const data = {
-        location_code: "11B10101"
+        actor: this.favorite_actor.id
       };
       const options = {
         headers: {
@@ -143,7 +143,7 @@ export default {
         }
       };
       axios
-        .post(`${SERVER_URL}/api/v1/weather_recommend/`, data, options)
+        .post(`${SERVER_URL}/api/v1/actor_recommend/`, data, options)
         .then(res => {
           this.favoriteActorMovieList = res.data;
           console.log(res);
