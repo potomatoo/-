@@ -47,6 +47,7 @@ def user_update(request, user_pk):
     user = get_object_or_404(User, pk=user_pk)   
     serializer = UserSerializer(user, data=request.data)    
     if serializer.is_valid(raise_exception=True):
+        
         serializer.save()
         return Response(serializer.data)
     
@@ -107,7 +108,7 @@ def weather_recommend(request):
             sample = random_sampling(movies)
 
         elif weather_status == '구름많음':
-            movies = Movie.objects.filter(Q(genre = 2) | Q(genre = 11) | Q(genre = 12) | Q(genre = 7)).distinct()            
+            movies = Movie.objects.filter(Q(genre = 1) | Q(genre = 2) | Q(genre = 11) | Q(genre = 12) | Q(genre = 7)).distinct()            
             sample = random_sampling(movies)
 
         elif weather_status == '흐림':
