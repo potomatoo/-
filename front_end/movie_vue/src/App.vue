@@ -3,7 +3,7 @@
 
     <v-app-bar app clipped-left>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>Movie</v-toolbar-title>
+      <v-toolbar-title>장씨배우</v-toolbar-title>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app clipped>

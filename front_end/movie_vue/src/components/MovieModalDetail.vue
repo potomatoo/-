@@ -60,7 +60,7 @@
 <script>
 import axios from "axios";
 import $ from 'jquery'
-const API_KEY = "AIzaSyDq251SEuFTbzlAFosz3mqXb5XiBA94e4o";
+const API_KEY = process.env.VUE_APP_YOUTUBE_API_KEY
 const API_URL = "https://www.googleapis.com/youtube/v3/search";
 
 export default {
@@ -86,7 +86,7 @@ export default {
 
     getTrailer() {
       const title = this.movie.title_en;
-      console.log(title)
+      console.log(title, API_KEY)
       axios
         .get(API_URL, {
           params: {
@@ -111,7 +111,7 @@ export default {
   },
 
 	created() {
-    this.getTrailer();
+    this.getTrailer();    
 	}
 };
  
